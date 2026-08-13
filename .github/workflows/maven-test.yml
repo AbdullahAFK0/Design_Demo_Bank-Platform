@@ -1,15 +1,20 @@
-name: Java Authentication Tests
+name: Java Maven Tests
 
 on:
+  push:
+    branches:
+      - main
+
   pull_request:
-    types: [opened, synchronize, reopened]
+    branches:
+      - main
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up Java
@@ -19,5 +24,5 @@ jobs:
           java-version: '17'
           cache: maven
 
-      - name: Run JUnit tests
+      - name: Run Maven tests
         run: mvn test
