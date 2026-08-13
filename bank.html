@@ -1,0 +1,2867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atlas Bank · Digital Banking Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument Serif:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F5F7FA;
+  --surface:#FFFFFF;
+  --surface-2:#F0F3F7;
+  --ink:#0F172A;
+  --ink-soft:#475569;
+  --ink-faint:#94A3B8;
+  --primary:#0B5CAB;
+  --primary-mid:#0E6BC7;
+  --primary-dark:#084A8C;
+  --primary-tint:#E8F1FB;
+  --accent:#C9A227;
+  --accent-soft:#D4AF37;
+  --accent-tint:#FBF6E6;
+  --border:#E2E8F0;
+  --border-strong:#CBD5E1;
+  --danger:#DC2626;
+  --danger-tint:#FEE2E2;
+  --success:#059669;
+  --success-tint:#D1FAE5;
+  --warning:#D97706;
+  --warning-tint:#FEF3C7;
+  --info:#0284C7;
+  --info-tint:#E0F2FE;
+  --shadow:0 1px 2px rgba(15,23,42,.04), 0 4px 12px -2px rgba(15,23,42,.06);
+  --shadow-lg:0 8px 24px -4px rgba(15,23,42,.1), 0 16px 40px -8px rgba(15,23,42,.08);
+  --radius:12px;
+  --radius-sm:8px;
+  --ease:cubic-bezier(.4,0,.2,1);
+  --ease-out:cubic-bezier(.22,1,.36,1);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'DM Sans',system-ui,sans-serif;
+  font-size:14px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  overflow:hidden;
+  letter-spacing:-0.01em;
+}
+h1,h2,h3,h4{font-family:'Instrument Serif',serif; margin:0; font-weight:600; letter-spacing:-0.01em;}
+.mono{font-family:'JetBrains Mono',monospace;}
+button{font-family:inherit; cursor:pointer;}
+::selection{background:rgba(59,158,255,.3);}
+a{color:inherit;}
+
+/* ===== Layout ===== */
+.app{display:flex; min-height:100vh;}
+.sidebar{
+  width:260px; flex:none; background:#0A2540; color:#E2EAF2;
+  display:flex; flex-direction:column; position:sticky; top:0; height:100vh; overflow-y:auto;
+  background-image: linear-gradient(180deg, #0A2540 0%, #071C30 100%);
+  border-right:1px solid rgba(255,255,255,.06);
+  box-shadow: 4px 0 24px -8px rgba(10,37,64,.25);
+}
+.sidebar::-webkit-scrollbar{width:6px;}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15); border-radius:4px;}
+.brand{
+  padding:22px 20px 16px; display:flex; align-items:center; gap:11px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.brand-mark{
+  width:38px;height:38px; flex:none; position:relative;
+  clip-path:polygon(30% 0%,70% 0%,100% 30%,100% 70%,70% 100%,30% 100%,0% 70%,0% 30%);
+  background:linear-gradient(155deg, var(--accent), #8f6c22);
+  display:flex; align-items:center; justify-content:center;
+}
+.brand-mark span{font-family:'Instrument Serif',serif; font-weight:700; color:var(--primary-dark); font-size:16px;}
+.brand-name{font-family:'Instrument Serif',serif; font-size:17px; font-weight:600; color:#fff;}
+.brand-sub{font-size:10.5px; letter-spacing:.09em; text-transform:uppercase; color:rgba(234,242,238,.55); margin-top:1px;}
+
+.nav-scroll{padding:14px 12px 24px;}
+.nav-group{margin-bottom:4px;}
+.nav-group-label{
+  font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:rgba(234,242,238,.4);
+  padding:14px 10px 6px; font-weight:600;
+}
+.nav-item{
+  display:flex; align-items:center; gap:11px; padding:8px 10px; border-radius:8px;
+  color:rgba(234,242,238,.82); text-decoration:none; font-size:13.3px; font-weight:500;
+  margin-bottom:2px; border:1px solid transparent; position:relative;
+}
+.nav-item:hover{background:rgba(255,255,255,.06); color:#fff;}
+.nav-item.active{background:linear-gradient(90deg,rgba(59,158,255,.18),rgba(59,158,255,.05)); color:#fff; border-color:rgba(59,158,255,.3); box-shadow:inset 3px 0 0 var(--primary);}
+.nav-item.active .octa{background:var(--primary); color:#0A0E14;}
+.nav-item .octa{
+  width:26px;height:26px; flex:none; display:flex; align-items:center; justify-content:center;
+  clip-path:polygon(29% 0%,71% 0%,100% 29%,100% 71%,71% 100%,29% 100%,0% 71%,0% 29%);
+  background:rgba(255,255,255,.09); font-family:'JetBrains Mono',monospace; font-size:9.5px; font-weight:600;
+  letter-spacing:-.02em;
+}
+.nav-item span.lbl{overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+
+.main{flex:1; min-width:0; display:flex; flex-direction:column;}
+.topbar{
+  background:rgba(21,27,36,.9); backdrop-filter:blur(16px); border-bottom:1px solid var(--border); padding:14px 26px;
+  display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:20;
+}
+.topbar-left{display:flex; align-items:center; gap:12px; min-width:0;}
+.hamburger{display:none; background:none; border:1px solid var(--border); border-radius:8px; padding:7px; }
+.crumb{color:var(--ink-faint); font-size:12.5px;}
+.topbar h1{font-size:19px;}
+.topbar-right{display:flex; align-items:center; gap:14px;}
+.search-box{
+  display:flex; align-items:center; gap:7px; background:var(--surface-2); border:1px solid var(--border);
+  border-radius:8px; padding:7px 11px; width:230px;
+}
+.search-box input{border:none; background:none; outline:none; font-size:12.8px; width:100%; color:var(--ink); font-family:inherit;}
+.icon-btn{
+  width:34px;height:34px; border-radius:8px; border:1px solid var(--border); background:var(--surface-2);
+  display:flex; align-items:center; justify-content:center; position:relative; color:var(--ink-soft);
+}
+.icon-btn .dot{position:absolute; top:6px; right:6px; width:7px; height:7px; background:var(--danger); border-radius:50%; border:1.5px solid var(--surface);}
+.profile{display:flex; align-items:center; gap:9px; padding-left:10px; border-left:1px solid var(--border);}
+.avatar{
+  width:32px;height:32px; border-radius:50%; background:var(--primary); color:#fff; display:flex; align-items:center;
+  justify-content:center; font-size:12px; font-weight:600; font-family:'JetBrains Mono',monospace;
+}
+.profile-name{font-size:12.5px; font-weight:600;}
+.profile-role{font-size:11px; color:var(--ink-faint);}
+
+.pulse-bar{
+  background:var(--primary); color:#C8D8E8; padding:7px 26px; display:flex; gap:28px; align-items:center;
+  font-size:11.8px; overflow-x:auto; white-space:nowrap;
+}
+.pulse-item{display:flex; align-items:center; gap:7px;}
+.pulse-item .k{color:rgba(234,242,238,.65);}
+.pulse-item .v{font-family:'JetBrains Mono',monospace; font-weight:600; color:var(--accent-tint);}
+.pulse-sep{width:1px; height:12px; background:rgba(234,242,238,.2);}
+
+.content{padding:24px 26px 60px; flex:1;}
+.view{display:none; animation:fadein .25s ease;}
+.view.active{display:block;}
+@keyframes fadein{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;}}
+
+.page-head{display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:20px; gap:16px; flex-wrap:wrap;}
+.page-eyebrow{font-size:11px; text-transform:uppercase; letter-spacing:.1em; color:var(--accent); font-weight:600; margin-bottom:4px;}
+.page-title{font-size:24px;}
+.page-desc{color:var(--ink-soft); font-size:13px; margin-top:4px; max-width:560px;}
+.btn{
+  border-radius:8px; padding:9px 15px; font-size:13px; font-weight:600; border:1px solid transparent; display:inline-flex; align-items:center; gap:7px;
+}
+.btn-primary{background:var(--primary); color:#fff;}
+.btn-primary:hover{background:var(--primary-dark);}
+.btn-ghost{background:var(--surface); border-color:var(--border); color:var(--ink);}
+.btn-ghost:hover{border-color:var(--primary);}
+.btn-accent{background:var(--accent); color:#3A2C0C;}
+.btn-sm{padding:6px 10px; font-size:12px; border-radius:7px;}
+.btn-danger-ghost{background:var(--danger-tint); color:var(--danger); border-color:transparent;}
+
+/* Cards / KPI */
+.grid{display:grid; gap:16px;}
+.grid-4{grid-template-columns:repeat(4,1fr);}
+.grid-3{grid-template-columns:repeat(3,1fr);}
+.grid-2{grid-template-columns:repeat(2,1fr);}
+@media (max-width:1100px){.grid-4{grid-template-columns:repeat(2,1fr);} .grid-3{grid-template-columns:repeat(2,1fr);}}
+.card{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px; box-shadow:var(--shadow);}
+.kpi .octa-sm{
+  width:34px;height:34px; clip-path:polygon(29% 0%,71% 0%,100% 29%,100% 71%,71% 100%,29% 100%,0% 71%,0% 29%);
+  background:var(--primary-tint); color:var(--primary); display:flex; align-items:center; justify-content:center;
+  font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; margin-bottom:12px;
+}
+.kpi .val{font-family:'Instrument Serif',serif; font-size:26px; font-weight:600;}
+.kpi .lbl{color:var(--ink-soft); font-size:12.2px; margin-top:2px;}
+.kpi .delta{font-size:11.5px; font-weight:600; margin-top:8px; display:inline-flex; align-items:center; gap:4px; padding:2px 7px; border-radius:20px;}
+.delta.up{background:var(--success-tint); color:var(--success);}
+.delta.down{background:var(--danger-tint); color:var(--danger);}
+
+.section-title{font-size:15px; margin-bottom:2px;}
+.section-sub{font-size:12px; color:var(--ink-faint); margin-bottom:14px;}
+
+/* Table */
+.table-card{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden;}
+.table-toolbar{display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid var(--border); gap:10px; flex-wrap:wrap;}
+.table-toolbar .search-box{width:220px;}
+table{width:100%; border-collapse:collapse; font-size:12.8px;}
+thead th{
+  text-align:left; padding:10px 16px; background:var(--surface-2); color:var(--ink-soft); font-weight:600;
+  font-size:11px; text-transform:uppercase; letter-spacing:.05em; cursor:pointer; user-select:none; white-space:nowrap;
+  border-bottom:1px solid var(--border);
+}
+thead th:hover{color:var(--primary);}
+thead th .arrow{opacity:.5; margin-left:3px;}
+tbody td{padding:11px 16px; border-bottom:1px solid var(--border); vertical-align:middle;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover{background:var(--surface-2);}
+.cell-strong{font-weight:600;}
+.cell-mono{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--ink-soft);}
+.empty-row td{text-align:center; padding:34px; color:var(--ink-faint);}
+
+.badge{display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:20px; font-size:11px; font-weight:600;}
+.badge::before{content:''; width:6px; height:6px; border-radius:50%; background:currentColor;}
+.badge.green{background:var(--success-tint); color:var(--success);}
+.badge.gold{background:var(--warning-tint); color:var(--warning);}
+.badge.red{background:var(--danger-tint); color:var(--danger);}
+.badge.blue{background:var(--info-tint); color:var(--info);}
+.badge.grey{background:var(--surface-2); color:var(--ink-faint);}
+
+/* Modal */
+.overlay{position:fixed; inset:0; background:rgba(12,26,22,.45); display:none; align-items:center; justify-content:center; z-index:100; padding:20px;}
+.overlay.open{display:flex;}
+.modal{background:var(--surface); border-radius:14px; width:520px; max-width:100%; max-height:88vh; overflow-y:auto; box-shadow:0 24px 60px -12px rgba(0,0,0,.35);}
+.modal-head{padding:18px 22px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between;}
+.modal-body{padding:20px 22px;}
+.modal-foot{padding:16px 22px; border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:10px;}
+.close-x{background:none; border:none; font-size:18px; color:var(--ink-faint); line-height:1;}
+.field{margin-bottom:14px;}
+.field label{display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:var(--ink-soft);}
+.field input, .field select, .field textarea{
+  width:100%; padding:9px 11px; border-radius:8px; border:1px solid var(--border); font-size:13px; font-family:inherit; background:var(--surface-2); color:var(--ink);
+}
+.field-row{display:flex; gap:12px;}
+.field-row .field{flex:1;}
+.toast-wrap{position:fixed; bottom:22px; right:22px; z-index:200; display:flex; flex-direction:column; gap:8px;}
+.toast{background:#1A2433; border:1px solid var(--border); color:#fff; padding:11px 16px; border-radius:9px; font-size:12.8px; box-shadow:var(--shadow); display:flex; align-items:center; gap:8px; animation:slidein .25s ease;}
+@keyframes slidein{from{opacity:0; transform:translateX(16px);} to{opacity:1; transform:none;}}
+
+/* Kanban */
+.kanban{display:flex; gap:14px; overflow-x:auto; padding-bottom:6px;}
+.kcol{background:var(--surface-2); border-radius:12px; padding:12px; width:270px; flex:none;}
+.kcol-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding:0 2px;}
+.kcol-head h4{font-size:12.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft);}
+.kcol-count{background:var(--surface); border-radius:20px; padding:1px 8px; font-size:11px; font-family:'JetBrains Mono',monospace;}
+.kcard{background:var(--surface); border-radius:9px; padding:11px 12px; margin-bottom:9px; box-shadow:var(--shadow); border-left:3px solid var(--accent);}
+.kcard .t{font-weight:600; font-size:12.8px; margin-bottom:5px;}
+.kcard .m{font-size:11px; color:var(--ink-faint); margin-bottom:8px;}
+.kcard .kactions{display:flex; gap:6px; flex-wrap:wrap;}
+
+/* Cards grid (products) */
+.pcard{background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:18px; box-shadow:var(--shadow); position:relative;}
+.pcard .tag{position:absolute; top:16px; right:16px;}
+.pcard h3{font-size:16px; margin-bottom:6px;}
+.pcard .meta{display:flex; gap:16px; margin-top:14px; padding-top:12px; border-top:1px dashed var(--border);}
+.pcard .meta div .n{font-family:'JetBrains Mono',monospace; font-weight:600; font-size:14px;}
+.pcard .meta div .l{font-size:10.5px; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.04em;}
+
+/* Stepper */
+.stepper-head{display:flex; margin-bottom:26px;}
+.step-node{flex:1; text-align:center; position:relative; font-size:11.5px; color:var(--ink-faint);}
+.step-node::before{content:''; position:absolute; top:14px; left:-50%; width:100%; height:2px; background:var(--border); z-index:0;}
+.step-node:first-child::before{display:none;}
+.step-node.done::before, .step-node.active::before{background:var(--primary);}
+.step-circle{width:29px; height:29px; border-radius:50%; background:var(--surface); border:2px solid var(--border); margin:0 auto 8px; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-weight:600; font-size:12px; position:relative; z-index:1; color:var(--ink-faint);}
+.step-node.active .step-circle{border-color:var(--primary); color:var(--primary); background:var(--primary-tint);}
+.step-node.done .step-circle{background:var(--primary); border-color:var(--primary); color:#fff;}
+.step-node.active{color:var(--primary); font-weight:600;}
+.step-panel{display:none;}
+.step-panel.active{display:block;}
+
+/* Heatmap */
+.heatmap{display:grid; grid-template-columns:80px repeat(5,1fr); gap:4px; max-width:560px;}
+.hm-axis{font-size:10.5px; color:var(--ink-faint); display:flex; align-items:center; justify-content:center; text-align:center;}
+.hm-cell{border-radius:6px; min-height:52px; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:600; color:#fff; position:relative;}
+
+/* Gauge / misc */
+.two-col{display:grid; grid-template-columns:1.4fr 1fr; gap:16px;}
+@media (max-width:1000px){.two-col{grid-template-columns:1fr;}}
+.legend{display:flex; gap:14px; flex-wrap:wrap; margin-top:10px;}
+.legend-item{display:flex; align-items:center; gap:6px; font-size:11.5px; color:var(--ink-soft);}
+.legend-dot{width:9px; height:9px; border-radius:2px;}
+.checklist-item{display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--border);}
+.checklist-item:last-child{border:none;}
+.checklist-item input{width:17px;height:17px; accent-color:var(--primary);}
+.checklist-item .txt{flex:1; font-size:13px;}
+.progress-track{background:var(--surface-2); height:8px; border-radius:20px; overflow:hidden;}
+.progress-fill{height:100%; background:var(--primary); border-radius:20px;}
+.tabs{display:flex; gap:4px; border-bottom:1px solid var(--border); margin-bottom:16px;}
+.tab{padding:9px 14px; font-size:12.8px; font-weight:600; color:var(--ink-faint); border-bottom:2px solid transparent; cursor:pointer;}
+.tab.active{color:var(--primary); border-color:var(--primary);}
+.bar-row{display:flex; align-items:center; gap:10px; margin-bottom:11px;}
+.bar-row .bl{width:118px; font-size:11.5px; color:var(--ink-soft); flex:none;}
+.bar-row .bt{flex:1; background:var(--surface-2); border-radius:20px; height:9px; overflow:hidden;}
+.bar-row .bf{height:100%; border-radius:20px; background:var(--primary);}
+.bar-row .bv{width:56px; text-align:right; font-family:'JetBrains Mono',monospace; font-size:11.5px; flex:none;}
+.status-strip{width:9px; height:9px; border-radius:50%; display:inline-block; margin-right:6px;}
+.help-note{font-size:11.5px; color:var(--ink-faint); background:var(--surface-2); padding:10px 12px; border-radius:8px; margin-top:6px;}
+
+@media (max-width:900px){
+  .sidebar{position:fixed; left:-280px; top:0; z-index:60; transition:left .2s ease; box-shadow:0 0 40px rgba(0,0,0,.3);}
+  .sidebar.open{left:0;}
+  .hamburger{display:flex;}
+  .search-box{display:none;}
+  .grid-4,.grid-3,.grid-2{grid-template-columns:1fr;}
+  .two-col{grid-template-columns:1fr;}
+  .content{padding:18px 14px 50px;}
+}
+
+#splash{position:fixed;inset:0;z-index:9999;background:linear-gradient(155deg,#06090E 0%,#0C1520 45%,#0A1828 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .7s ease,visibility .7s ease}
+#splash.hide{opacity:0;visibility:hidden;pointer-events:none}
+.splash-logo{width:88px;height:88px;margin-bottom:28px;animation:logoIn .8s cubic-bezier(.22,1,.36,1) both}
+.splash-logo svg{width:100%;height:100%;filter:drop-shadow(0 8px 24px rgba(0,0,0,.25))}
+.splash-brand{font-family:'Instrument Serif',serif;font-size:36px;color:#fff;letter-spacing:-.02em;margin-bottom:6px;animation:fadeUp .7s .2s both}
+.splash-tag{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.55);font-weight:500;animation:fadeUp .7s .35s both}
+.splash-bar{width:160px;height:3px;background:rgba(255,255,255,.15);border-radius:4px;margin-top:36px;overflow:hidden;animation:fadeUp .7s .5s both}
+.splash-bar-fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),#D4A017);border-radius:4px;animation:loadBar 1.8s .6s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes logoIn{from{opacity:0;transform:scale(.7) rotate(-8deg)}to{opacity:1;transform:none}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes loadBar{to{width:100%}}
+.app{opacity:0;transition:opacity .5s ease .1s}
+.app.ready{opacity:1}
+body{overflow:hidden}
+
+
+/* Refined professional polish */
+.card,.table-card,.pcard,.kcard{
+  transition: box-shadow .25s var(--ease), transform .25s var(--ease), border-color .2s var(--ease);
+}
+.card:hover,.pcard:hover{
+  box-shadow: var(--shadow-lg);
+  border-color: var(--border-strong);
+}
+.kpi .val{ letter-spacing: -0.03em; }
+.btn{
+  transition: background .2s var(--ease), border-color .2s var(--ease), color .2s var(--ease), box-shadow .2s var(--ease), transform .15s var(--ease);
+}
+.btn-primary{
+  background: linear-gradient(180deg, #4AA8FF 0%, var(--primary) 100%);
+  box-shadow: 0 1px 3px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.15);
+}
+.btn-primary:hover{
+  background: linear-gradient(180deg, var(--primary) 0%, var(--primary-mid) 100%);
+  box-shadow: 0 4px 14px -2px rgba(59,158,255,.35);
+  transform: translateY(-1px);
+}
+.btn-primary:active{ transform: translateY(0); }
+.btn-ghost:hover{
+  background: var(--primary-tint);
+  border-color: var(--primary);
+  color: #7EC4FF;
+}
+.nav-item{
+  transition: background .18s var(--ease), color .18s var(--ease), border-color .18s var(--ease), transform .15s var(--ease);
+}
+.nav-item:hover{ transform: translateX(2px); }
+.nav-item.active{
+  background: linear-gradient(90deg, rgba(59,158,255,.18), rgba(59,158,255,.05));
+  border-color: rgba(59,158,255,.3);
+  box-shadow: inset 3px 0 0 var(--primary);
+}
+.view{ animation: fadeSlide .28s var(--ease-out); }
+@keyframes fadeSlide{
+  from{ opacity:0; transform: translateY(8px); }
+  to{ opacity:1; transform: none; }
+}
+.topbar{
+  backdrop-filter: blur(16px);
+  background: rgba(21,27,36,.88);
+}
+.pulse-bar{
+  background: linear-gradient(90deg, #0A1628, #123050 40%, #1A3A5C);
+}
+.badge{ transition: transform .15s var(--ease); }
+.badge:hover{ transform: scale(1.04); }
+.kcard{
+  transition: box-shadow .2s var(--ease), transform .2s var(--ease), border-color .2s var(--ease);
+}
+.kcard:hover{
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+  border-left-color: var(--accent-soft);
+}
+.modal{
+  animation: modalIn .28s var(--ease-out);
+  box-shadow: var(--shadow-lg);
+}
+@keyframes modalIn{
+  from{ opacity:0; transform: scale(.96) translateY(12px); }
+  to{ opacity:1; transform: none; }
+}
+.overlay{ backdrop-filter: blur(4px); transition: opacity .25s var(--ease); }
+.toast{ animation: slidein .3s var(--ease-out); }
+table tbody tr{ transition: background .15s var(--ease); }
+.progress-fill{ transition: width .5s var(--ease-out); }
+.step-circle{ transition: all .25s var(--ease); }
+.hm-cell{ transition: transform .15s var(--ease), filter .15s var(--ease); }
+.hm-cell:hover{ transform: scale(1.06); filter: brightness(1.08); }
+.pcard .tag .badge{ box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+.sidebar{
+  box-shadow: 4px 0 24px -8px rgba(7,42,64,.35);
+}
+.brand-mark svg{ transition: transform .3s var(--ease-out); }
+.brand:hover .brand-mark svg{ transform: scale(1.06) rotate(-3deg); }
+.search-box{ transition: border-color .2s var(--ease), box-shadow .2s var(--ease); }
+.search-box:focus-within{
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(11,61,92,.1);
+}
+.icon-btn{ transition: background .15s, border-color .15s, color .15s, transform .15s; }
+.icon-btn:hover{
+  background: var(--primary-tint);
+  border-color: var(--primary);
+  color: #7EC4FF;
+  transform: translateY(-1px);
+}
+.avatar{ box-shadow: 0 0 0 2px var(--surface), 0 0 0 3.5px var(--primary-tint); }
+.page-title{ letter-spacing: -0.03em; }
+.kpi{ position: relative; overflow: hidden; }
+.kpi::after{
+  content:'';
+  position:absolute; top:0; right:0; width:80px; height:80px;
+  background: radial-gradient(circle at 100% 0%, rgba(59,158,255,.1), transparent 70%);
+  pointer-events:none; opacity:.7;
+}
+
+
+.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);}
+.content::-webkit-scrollbar{width:8px;}
+.content::-webkit-scrollbar-track{background:transparent;}
+.content::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:4px;}
+.content::-webkit-scrollbar-thumb:hover{background:var(--ink-faint);}
+
+
+
+/* ========== Professional Light Theme ========== */
+.card, .table-card, .pcard {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: var(--shadow);
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+.card::before, .table-card::before, .pcard::before, .modal::before, .kcard::before {
+  display: none !important;
+}
+.card:hover, .pcard:hover {
+  box-shadow: var(--shadow-lg);
+  border-color: var(--border-strong) !important;
+  transform: translateY(-1px);
+}
+.topbar {
+  background: var(--surface) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-bottom: 1px solid var(--border) !important;
+  box-shadow: 0 1px 0 rgba(15,23,42,.03);
+}
+.search-box {
+  background: var(--surface-2) !important;
+  border: 1px solid var(--border) !important;
+  backdrop-filter: none !important;
+}
+.search-box:focus-within {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px rgba(11,92,171,.12);
+  background: var(--surface) !important;
+}
+.icon-btn {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--ink-soft) !important;
+  backdrop-filter: none !important;
+}
+.icon-btn:hover {
+  background: var(--primary-tint) !important;
+  border-color: var(--primary) !important;
+  color: var(--primary) !important;
+}
+.modal {
+  background: var(--surface) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: var(--shadow-lg) !important;
+  border-radius: 14px !important;
+}
+.overlay {
+  background: rgba(15,23,42,.4) !important;
+  backdrop-filter: blur(2px) !important;
+}
+.sidebar {
+  background: #0A2540 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background-image: linear-gradient(180deg, #0A2540 0%, #071C30 100%) !important;
+}
+.nav-item {
+  color: rgba(226,234,242,.78) !important;
+}
+.nav-item:hover {
+  background: rgba(255,255,255,.07) !important;
+  color: #fff !important;
+  transform: none;
+}
+.nav-item.active {
+  background: rgba(201,162,39,.18) !important;
+  border-color: rgba(201,162,39,.35) !important;
+  box-shadow: none !important;
+  color: #fff !important;
+}
+.nav-item.active .octa {
+  background: var(--accent) !important;
+  color: #0A2540 !important;
+  box-shadow: none !important;
+}
+.nav-item .octa {
+  background: rgba(255,255,255,.08) !important;
+  color: rgba(226,234,242,.7);
+}
+.pulse-bar {
+  background: linear-gradient(90deg, #0A2540, #0B5CAB) !important;
+  backdrop-filter: none !important;
+  border-bottom: none !important;
+  color: #E2EAF2 !important;
+}
+.pulse-item .k { color: rgba(226,234,242,.6) !important; }
+.pulse-item .v { color: #F5E6B8 !important; }
+.btn-primary {
+  background: var(--primary) !important;
+  border: none !important;
+  box-shadow: 0 1px 2px rgba(11,92,171,.2) !important;
+  color: #fff !important;
+}
+.btn-primary:hover {
+  background: var(--primary-dark) !important;
+  box-shadow: 0 4px 12px -2px rgba(11,92,171,.35) !important;
+}
+.btn-ghost {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--ink) !important;
+  backdrop-filter: none !important;
+}
+.btn-ghost:hover {
+  background: var(--primary-tint) !important;
+  border-color: var(--primary) !important;
+  color: var(--primary) !important;
+}
+.toast {
+  background: #0A2540 !important;
+  color: #fff !important;
+  border: none !important;
+  backdrop-filter: none !important;
+  box-shadow: var(--shadow-lg) !important;
+}
+.kcard {
+  background: var(--surface) !important;
+  backdrop-filter: none !important;
+  border: 1px solid var(--border) !important;
+  border-left: 3px solid var(--accent) !important;
+  box-shadow: var(--shadow);
+}
+.kcol {
+  background: var(--surface-2) !important;
+  backdrop-filter: none !important;
+  border: 1px solid var(--border) !important;
+}
+thead th {
+  background: var(--surface-2) !important;
+  backdrop-filter: none !important;
+  color: var(--ink-soft) !important;
+}
+tbody tr:hover {
+  background: var(--surface-2) !important;
+}
+.step-circle {
+  background: var(--surface) !important;
+  backdrop-filter: none !important;
+  border-color: var(--border) !important;
+  color: var(--ink-faint) !important;
+}
+.step-node.active .step-circle {
+  background: var(--primary-tint) !important;
+  border-color: var(--primary) !important;
+  color: var(--primary) !important;
+  box-shadow: none !important;
+}
+.step-node.done .step-circle {
+  background: var(--primary) !important;
+  border-color: var(--primary) !important;
+  color: #fff !important;
+}
+.progress-track { background: var(--surface-2) !important; }
+.progress-fill {
+  background: var(--primary) !important;
+  box-shadow: none !important;
+}
+.kpi .octa-sm {
+  background: var(--primary-tint) !important;
+  color: var(--primary) !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+.kpi::after {
+  background: radial-gradient(circle at 100% 0%, var(--primary-tint), transparent 70%) !important;
+  opacity: .5;
+}
+.field input, .field select, .field textarea {
+  background: var(--bg) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--ink) !important;
+  backdrop-filter: none !important;
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px rgba(11,92,171,.12);
+}
+.tab.active { color: var(--primary) !important; border-color: var(--primary) !important; }
+.avatar {
+  background: var(--primary) !important;
+  box-shadow: none !important;
+}
+.badge.green { background: var(--success-tint); color: var(--success); }
+.badge.gold { background: var(--warning-tint); color: var(--warning); }
+.badge.red { background: var(--danger-tint); color: var(--danger); }
+.badge.blue { background: var(--info-tint); color: var(--info); }
+.badge.grey { background: var(--surface-2); color: var(--ink-faint); }
+
+/* Professional nav icons */
+.nav-item .octa {
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 7px;
+  background: rgba(255,255,255,.08);
+}
+.nav-item .octa svg {
+  width: 15px; height: 15px;
+  stroke: currentColor; fill: none;
+  stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round;
+}
+.nav-item.active .octa svg { stroke: #0A2540; }
+
+/* Icon buttons use SVG */
+.icon-btn svg {
+  width: 18px; height: 18px;
+  stroke: currentColor; fill: none;
+  stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round;
+}
+
+/* Brand logo cleaner */
+.brand-mark svg { border-radius: 10px; }
+
+/* Splash light-professional */
+#splash {
+  background: linear-gradient(155deg, #0A2540 0%, #0B5CAB 50%, #084A8C 100%) !important;
+}
+
+/* =========================================================
+   ATLAS Digital BANK — MODERN AUTH / ACCOUNT EXPERIENCE
+   ========================================================= */
+:root{
+  --Digital-navy:#071D35;
+  --Digital-navy-2:#0A2D4D;
+  --Digital-blue:#0B5CAB;
+  --Digital-gold:#C9A227;
+  --Digital-gold-soft:#F7F0D5;
+  --Digital-green:#087F5B;
+}
+body{background:#F5F8FC;}
+button{border:0;}
+.topbar-right{gap:10px;}
+.workspace-switcher,.service-menu-wrap,.profile-menu-wrap{position:relative;}
+.workspace-trigger,.service-trigger,.profile-trigger{
+  border:1px solid var(--border); background:var(--surface); color:var(--ink);
+  min-height:38px; border-radius:10px; display:flex; align-items:center; gap:9px;
+  padding:6px 10px; transition:.2s ease; box-shadow:0 1px 2px rgba(15,23,42,.03);
+}
+.workspace-trigger:hover,.service-trigger:hover,.profile-trigger:hover{border-color:#AFC3D8;background:#F8FBFF;}
+.workspace-icon{width:26px;height:26px;border-radius:8px;background:var(--primary-tint);color:var(--primary);display:grid;place-items:center;font-size:13px;}
+.workspace-trigger b{display:block;font-size:11.5px;text-align:left;}
+.workspace-trigger small{display:block;color:var(--ink-faint);font-size:9px;text-align:left;}
+.chevron{font-size:13px;color:var(--ink-faint);}
+.service-trigger{font-size:11.5px;font-weight:700;color:var(--primary);padding:0 11px;}
+.service-count{background:var(--primary-tint);color:var(--primary);padding:2px 6px;border-radius:20px;font-size:9px;}
+.workspace-menu,.service-menu,.profile-menu{
+  position:absolute;top:calc(100% + 9px);right:0;width:285px;background:#fff;border:1px solid var(--border);
+  border-radius:14px;box-shadow:0 18px 45px rgba(15,23,42,.16);padding:7px;z-index:1000;
+  opacity:0;visibility:hidden;transform:translateY(-5px);transition:.18s ease;
+}
+.workspace-menu.open,.service-menu.open,.profile-menu.open{opacity:1;visibility:visible;transform:none;}
+.workspace-menu button,.service-menu button,.profile-menu>button{
+  width:100%;background:transparent;text-align:left;padding:10px;border-radius:9px;color:var(--ink);
+  display:flex;align-items:center;gap:10px;font-family:inherit;font-size:12px;cursor:pointer;
+}
+.workspace-menu button:hover,.service-menu button:hover,.profile-menu>button:hover{background:#F4F8FC;}
+.workspace-menu button>span,.service-menu button>span{display:flex;flex-direction:column;gap:2px;}
+.workspace-menu small,.service-menu small{font-size:10px;color:var(--ink-faint);font-weight:400;}
+.workspace-menu b,.service-menu b{font-size:11.5px;}
+.service-menu{width:330px;padding:9px;}
+.service-menu-head{padding:8px 10px 10px;border-bottom:1px solid var(--border);margin-bottom:4px;}
+.service-menu-head b{display:block;font-size:13px;}
+.service-menu-head span{font-size:10px;color:var(--ink-faint);}
+.profile-trigger{padding:3px 7px 3px 5px;border-radius:24px;}
+.profile-copy{text-align:left;}
+.profile-menu{width:260px;padding:8px;}
+.profile-menu-user{display:flex;gap:10px;align-items:center;padding:10px;border-bottom:1px solid var(--border);margin-bottom:5px;}
+.profile-menu-user b{display:block;font-size:12px;}
+.profile-menu-user small{display:block;color:var(--ink-faint);font-size:10px;margin-top:2px;}
+.avatar.large{width:38px;height:38px;}
+.logout-action{color:var(--danger)!important;border-top:1px solid var(--border);margin-top:4px;padding-top:12px!important;}
+
+.auth-screen{
+  position:fixed;inset:0;z-index:10000;display:grid;place-items:center;padding:24px;
+  background:radial-gradient(circle at 12% 20%,rgba(201,162,39,.16),transparent 25%),
+             linear-gradient(135deg,#06182A 0%,#092D4B 48%,#0B5CAB 100%);
+}
+.auth-shell{
+  width:min(1060px,100%);min-height:650px;display:grid;grid-template-columns:1.02fr .98fr;
+  background:#fff;border-radius:24px;overflow:hidden;box-shadow:0 35px 90px rgba(0,0,0,.28);
+}
+.auth-brand-panel{
+  padding:54px;position:relative;color:#fff;display:flex;flex-direction:column;justify-content:center;
+  background:linear-gradient(145deg,#071D35,#0A3556);
+}
+.auth-brand-panel:after{
+  content:"";position:absolute;right:-90px;bottom:-90px;width:300px;height:300px;border:1px solid rgba(201,162,39,.25);
+  border-radius:50%;box-shadow:0 0 0 50px rgba(201,162,39,.035),0 0 0 100px rgba(201,162,39,.025);
+}
+.auth-logo{width:58px;height:58px;margin-bottom:30px;}
+.auth-logo svg{width:100%;height:100%;}
+.auth-kicker{font:600 10px/1 'DM Sans',sans-serif;letter-spacing:.18em;color:#E7CE76;margin-bottom:16px;}
+.auth-brand-panel h2{font-family:'Instrument Serif',serif;font-size:46px;line-height:1.05;font-weight:500;margin:0 0 18px;position:relative;z-index:1;}
+.auth-brand-panel h2 em{color:#E7CE76;font-style:normal;}
+.auth-brand-panel p{color:rgba(255,255,255,.68);max-width:410px;font-size:14px;line-height:1.7;}
+.shariah-pills{display:flex;gap:7px;flex-wrap:wrap;margin-top:20px;position:relative;z-index:1;}
+.shariah-pills span{font-size:10px;padding:7px 10px;border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.05);border-radius:30px;color:#E8F2F8;}
+.auth-verse{margin-top:42px;padding-left:15px;border-left:2px solid var(--Digital-gold);font-family:'Instrument Serif',serif;font-size:17px;color:#F7F1DC;position:relative;z-index:1;}
+.auth-verse small{display:block;font:10px 'DM Sans',sans-serif;color:rgba(255,255,255,.45);margin-top:6px;}
+.auth-form-panel{padding:48px 52px;display:flex;flex-direction:column;justify-content:center;}
+.auth-mobile-brand{display:none;color:var(--Digital-navy);font-family:'Instrument Serif';font-size:24px;font-weight:600;}
+.secure-badge{display:inline-flex;align-items:center;gap:6px;width:max-content;color:var(--Digital-green);background:#E9F7F2;border:1px solid #CBEBDD;border-radius:20px;padding:5px 9px;font-size:10px;font-weight:700;}
+.auth-heading{margin-bottom:24px;}
+.auth-heading h1{font-family:'Instrument Serif',serif;font-size:38px;margin:12px 0 3px;color:var(--ink);}
+.auth-heading p{font-size:12.5px;color:var(--ink-soft);margin:0;}
+.auth-account-preview{display:flex;align-items:center;gap:10px;padding:10px;background:#F7F9FC;border:1px solid var(--border);border-radius:12px;margin-bottom:18px;}
+.auth-avatar{width:38px;height:38px!important;flex:none;}
+.auth-account-preview div:nth-child(2){flex:1;}
+.auth-account-preview b{display:block;font-size:12px;}
+.auth-account-preview small{display:block;font-size:10px;color:var(--ink-faint);}
+.auth-account-preview button{background:var(--primary-tint);color:var(--primary);font-weight:700;font-size:10px;padding:7px 10px;border-radius:8px;cursor:pointer;}
+.auth-field{margin-bottom:13px;}
+.auth-field label{font-size:11px;}
+.auth-field input{background:#fff!important;padding:11px 12px;border-radius:10px;}
+.password-wrap{position:relative;}
+.password-wrap input{padding-right:58px;}
+.password-wrap button{position:absolute;right:6px;top:5px;background:#F1F5F9;color:var(--ink-soft);padding:6px 8px;border-radius:7px;font-size:10px;cursor:pointer;}
+.auth-row{display:flex;justify-content:space-between;align-items:center;margin:3px 0 16px;}
+.remember{font-size:10.5px;color:var(--ink-soft);display:flex;align-items:center;gap:6px;}
+.remember input{accent-color:var(--primary);}
+.link-btn{background:none;color:var(--primary);font-size:10.5px;font-weight:700;cursor:pointer;}
+.auth-submit{width:100%;justify-content:space-between;padding:12px 15px;border-radius:10px;font-size:12px;}
+.auth-divider{display:flex;align-items:center;gap:10px;margin:18px 0 12px;color:var(--ink-faint);font-size:10px;}
+.auth-divider:before,.auth-divider:after{content:"";height:1px;background:var(--border);flex:1;}
+.biometric-btn{width:100%;padding:11px;border:1px solid var(--border);background:#fff;border-radius:10px;color:var(--ink);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;}
+.biometric-btn:hover{border-color:var(--primary);background:var(--primary-tint);color:var(--primary);}
+.auth-footer{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;margin-top:20px;color:var(--ink-faint);font-size:9px;}
+
+.workspace-overlay{position:fixed;inset:0;background:rgba(5,20,35,.55);backdrop-filter:blur(6px);z-index:11000;display:none;align-items:center;justify-content:center;padding:20px;}
+.workspace-overlay.open{display:flex;}
+.workspace-dialog{width:min(720px,100%);background:#fff;border-radius:20px;padding:30px;position:relative;box-shadow:0 30px 70px rgba(0,0,0,.25);}
+.dialog-close{position:absolute;right:17px;top:15px;background:#F1F5F9;color:var(--ink-soft);width:30px;height:30px;border-radius:50%;font-size:19px;cursor:pointer;}
+.workspace-dialog h2{font-family:'Instrument Serif';font-size:30px;margin:13px 0 3px;}
+.workspace-dialog>p{font-size:12px;color:var(--ink-soft);margin:0 0 20px;}
+.account-switch-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.account-switch-card{position:relative;text-align:left;padding:16px;border:1px solid var(--border);background:#fff;border-radius:13px;cursor:pointer;display:grid;grid-template-columns:34px 1fr;column-gap:10px;transition:.18s ease;}
+.account-switch-card:hover{border-color:#9DB9D2;transform:translateY(-1px);box-shadow:var(--shadow);}
+.account-switch-card.selected{border-color:var(--primary);background:#F5FAFF;box-shadow:0 0 0 3px rgba(11,92,171,.08);}
+.account-switch-icon{grid-row:1/3;width:34px;height:34px;border-radius:9px;background:var(--primary-tint);color:var(--primary);display:grid;place-items:center;font-size:15px;}
+.account-switch-card b{font-size:12px;}
+.account-switch-card small{font-size:10px;color:var(--ink-faint);margin-top:3px;}
+.switch-check{position:absolute;right:10px;top:10px;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;background:var(--primary);color:#fff;font-size:10px;opacity:0;}
+.account-switch-card.selected .switch-check{opacity:1;}
+
+.account-service-modal .service-hero{background:linear-gradient(135deg,#071D35,#0B5CAB);color:#fff;padding:22px;border-radius:13px;margin-bottom:18px;}
+.account-service-modal .service-hero h3{font-family:'Instrument Serif';font-size:26px;margin:5px 0;}
+.account-service-modal .service-hero p{font-size:11px;color:rgba(255,255,255,.7);margin:0;}
+.account-service-modal .service-options{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;}
+.account-service-modal .service-option{padding:12px;border:1px solid var(--border);border-radius:10px;background:#fff;}
+.account-service-modal .service-option b{display:block;font-size:11.5px;}
+.account-service-modal .service-option span{font-size:10px;color:var(--ink-faint);}
+
+@media(max-width:1050px){
+  .workspace-switcher,.service-menu-wrap{display:none;}
+  .auth-shell{grid-template-columns:1fr;max-width:520px;min-height:auto;}
+  .auth-brand-panel{display:none;}
+  .auth-form-panel{padding:42px 34px;}
+  .auth-mobile-brand{display:block;margin-bottom:28px;}
+}
+@media(max-width:700px){
+  .auth-screen{padding:0;background:#fff;}
+  .auth-shell{width:100%;height:100%;border-radius:0;box-shadow:none;}
+  .auth-form-panel{padding:28px 20px;}
+  .account-switch-grid{grid-template-columns:1fr;}
+  .workspace-dialog{padding:24px 18px;}
+  .profile-copy{display:none;}
+}
+
+
+.auth-screen.hidden{opacity:0;visibility:hidden;pointer-events:none;transition:.35s ease;}
+.auth-screen{transition:.35s ease;}
+
+/* ===== Refined first-load splash ===== */
+#splash{
+  position:fixed;inset:0;z-index:20000;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  overflow:hidden;background:
+    radial-gradient(circle at 50% 42%,rgba(201,162,39,.13),transparent 22%),
+    radial-gradient(circle at 12% 90%,rgba(11,92,171,.22),transparent 32%),
+    linear-gradient(145deg,#06182A 0%,#082A47 52%,#071C30 100%);
+}
+#splash:before,#splash:after{content:"";position:absolute;border:1px solid rgba(201,162,39,.12);transform:rotate(45deg);pointer-events:none;}
+#splash:before{width:390px;height:390px;border-radius:58px;}
+#splash:after{width:570px;height:570px;border-radius:88px;border-color:rgba(255,255,255,.045);}
+#splash .splash-logo{width:86px;height:86px;position:relative;z-index:1;filter:drop-shadow(0 14px 30px rgba(0,0,0,.3));animation:splashLogoIn .8s cubic-bezier(.22,1,.36,1) both;}
+#splash .splash-logo svg{width:100%;height:100%;}
+#splash .splash-brand{position:relative;z-index:1;color:#fff;font-family:'Instrument Serif',serif;font-size:31px;letter-spacing:-.02em;margin-top:21px;animation:splashTextIn .7s .15s both;}
+#splash .splash-tag{position:relative;z-index:1;color:rgba(255,255,255,.55);font-size:10px;letter-spacing:.19em;text-transform:uppercase;margin-top:4px;animation:splashTextIn .7s .22s both;}
+#splash .splash-bar{position:relative;z-index:1;width:180px;height:2px;background:rgba(255,255,255,.12);border-radius:10px;margin-top:32px;overflow:hidden;}
+#splash .splash-status{position:relative;z-index:1;margin-top:10px;color:rgba(255,255,255,.34);font-size:9px;letter-spacing:.04em;animation:splashTextIn .7s .3s both;}#splash .splash-bar-fill{height:100%;width:0;background:linear-gradient(90deg,#C9A227,#F4D66D);animation:splashLoad 1.75s .15s cubic-bezier(.4,0,.2,1) forwards;}
+#splash.hide{animation:splashOut .5s ease forwards;pointer-events:none;}
+@keyframes splashLogoIn{from{opacity:0;transform:translateY(16px) scale(.88) rotate(-5deg)}to{opacity:1;transform:none}}
+@keyframes splashTextIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes splashLoad{from{width:0}to{width:100%}}
+@keyframes splashOut{to{opacity:0;visibility:hidden;transform:scale(1.015)}}
+
+/* More subtle Digital visual language throughout */
+.brand-mark,.workspace-icon,.account-switch-icon{box-shadow:inset 0 0 0 1px rgba(201,162,39,.12);}
+.auth-form-panel{background:linear-gradient(180deg,#fff 0%,#FCFDFE 100%);}
+.auth-shell{border:1px solid rgba(201,162,39,.14);}
+
+
+/* =========================================================
+   Atlas Bank — PREMIUM DEVELOPER / FINTECH UI
+   Clean enterprise aesthetic: graphite + electric violet
+   ========================================================= */
+:root{
+  --primary:#6D4AFF;
+  --primary-2:#8B5CF6;
+  --primary-tint:#F0EDFF;
+  --accent:#16C7A1;
+  --accent-tint:#E8FBF5;
+  --navy:#10121A;
+  --navy-2:#181B25;
+  --surface:#FFFFFF;
+  --bg:#F5F6FA;
+  --ink:#171923;
+  --ink-soft:#5F6472;
+  --ink-faint:#8B91A1;
+  --border:#E5E7EE;
+  --danger:#D6455D;
+  --warning:#D99500;
+  --shadow:0 12px 35px rgba(24,27,37,.09);
+  --shadow-lg:0 28px 80px rgba(10,12,20,.18);
+}
+
+body{
+  background:
+    radial-gradient(circle at 82% 4%,rgba(109,74,255,.07),transparent 22%),
+    radial-gradient(circle at 5% 60%,rgba(22,199,161,.045),transparent 20%),
+    var(--bg);
+  color:var(--ink);
+}
+
+/* Developer-style top navigation */
+.topbar{
+  background:rgba(255,255,255,.88)!important;
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(229,231,238,.85)!important;
+}
+.brand-name{
+  color:var(--navy)!important;
+  letter-spacing:-.03em;
+}
+.brand-sub{
+  color:var(--primary)!important;
+  letter-spacing:.09em;
+}
+.workspace-trigger,.service-trigger,.profile-trigger{
+  border-color:var(--border);
+  background:#fff;
+}
+.workspace-icon{
+  background:linear-gradient(135deg,var(--primary),var(--primary-2))!important;
+  color:#fff!important;
+}
+.service-count{
+  background:var(--primary-tint)!important;
+  color:var(--primary)!important;
+}
+.btn-primary{
+  background:linear-gradient(135deg,var(--primary),var(--primary-2))!important;
+  box-shadow:0 8px 20px rgba(109,74,255,.22);
+}
+.btn-primary:hover{
+  transform:translateY(-1px);
+  box-shadow:0 12px 25px rgba(109,74,255,.28);
+}
+.nav-item.active{
+  color:var(--primary)!important;
+  background:var(--primary-tint)!important;
+}
+.nav-item.active:before{
+  background:var(--primary)!important;
+}
+
+/* Premium cards */
+.card,.metric-card,.panel,.table-card{
+  border-color:var(--border)!important;
+  box-shadow:0 5px 22px rgba(24,27,37,.045);
+}
+.card:hover,.metric-card:hover{
+  border-color:#D5CEF9!important;
+}
+
+/* Login / splash */
+.auth-screen{
+  background:
+    radial-gradient(circle at 12% 18%,rgba(139,92,246,.30),transparent 24%),
+    radial-gradient(circle at 88% 80%,rgba(22,199,161,.15),transparent 24%),
+    linear-gradient(135deg,#0C0E14,#171A25 52%,#10121A)!important;
+}
+.auth-shell{
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:0 40px 110px rgba(0,0,0,.42);
+}
+.auth-brand-panel{
+  background:
+    radial-gradient(circle at 80% 18%,rgba(109,74,255,.24),transparent 28%),
+    linear-gradient(145deg,#10121A,#181B25)!important;
+}
+.auth-kicker{
+  color:#A99AFF!important;
+}
+.auth-brand-panel h2 em{
+  color:#A99AFF!important;
+}
+.auth-logo svg rect{
+  fill:#6D4AFF!important;
+}
+.auth-logo svg path{
+  fill:#FFFFFF!important;
+}
+.secure-badge{
+  color:#087D68!important;
+  background:var(--accent-tint)!important;
+  border-color:#C5F0E5!important;
+}
+.auth-submit{
+  background:linear-gradient(135deg,var(--primary),var(--primary-2))!important;
+}
+.auth-account-preview button{
+  background:var(--primary-tint)!important;
+  color:var(--primary)!important;
+}
+.biometric-btn:hover{
+  border-color:var(--primary)!important;
+  background:var(--primary-tint)!important;
+  color:var(--primary)!important;
+}
+
+/* Switcher */
+.account-switch-card.selected{
+  border-color:var(--primary)!important;
+  background:#F8F7FF!important;
+  box-shadow:0 0 0 3px rgba(109,74,255,.09)!important;
+}
+.account-switch-icon{
+  background:var(--primary-tint)!important;
+  color:var(--primary)!important;
+}
+.switch-check{
+  background:var(--primary)!important;
+}
+
+/* Subtle code/product cues */
+.workspace-menu b,.service-menu b{
+  letter-spacing:-.01em;
+}
+.service-menu-head{
+  border-bottom-color:var(--border);
+}
+.search-box{
+  border-color:var(--border)!important;
+  background:#fff!important;
+}
+.search-box:focus-within{
+  border-color:#B9AEF8!important;
+  box-shadow:0 0 0 3px rgba(109,74,255,.08);
+}
+input:focus,select:focus,textarea:focus{
+  border-color:#B9AEF8!important;
+  box-shadow:0 0 0 3px rgba(109,74,255,.08)!important;
+}
+
+/* Developer-inspired status colors */
+.status-active,.badge-success{
+  background:#E8FBF5!important;
+  color:#087D68!important;
+}
+.badge-warning{
+  background:#FFF6DD!important;
+  color:#9A6900!important;
+}
+.badge-danger{
+  background:#FFF0F2!important;
+  color:#B93850!important;
+}
+
+/* Splash logo */
+.splash{
+  background:
+    radial-gradient(circle at 50% 35%,rgba(109,74,255,.18),transparent 28%),
+    #0C0E14!important;
+}
+.splash-brand{
+  color:#fff!important;
+  letter-spacing:-.035em;
+}
+.splash-tag{
+  color:#A99AFF!important;
+}
+
+
+/* =========================================================
+   Atlas Bank — FINAL VISUAL POLISH
+   Simple, high-contrast, premium fintech theme
+   ========================================================= */
+:root{
+  --primary:#5B4BDB;
+  --primary-2:#7C6FF0;
+  --primary-tint:#F0EEFF;
+  --mint:#12B886;
+  --mint-tint:#E9FBF5;
+  --ink:#111318;
+  --ink-2:#242833;
+  --ink-soft:#616876;
+  --ink-faint:#969CAA;
+  --bg:#F7F8FB;
+  --surface:#FFFFFF;
+  --border:#E4E7ED;
+  --dark:#101218;
+  --shadow:0 10px 30px rgba(17,19,24,.07);
+  --shadow-lg:0 25px 70px rgba(17,19,24,.16);
+}
+
+/* Typography */
+body{
+  font-family:'DM Sans',Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:var(--ink);
+  background:
+    radial-gradient(circle at 90% 0%,rgba(91,75,219,.055),transparent 22%),
+    var(--bg);
+}
+h1,h2,h3,h4,h5,h6{
+  color:var(--ink);
+  letter-spacing:-.025em;
+}
+.brand-name,
+.auth-mobile-brand,
+.splash-brand{
+  color:#000000!important;
+  font-weight:800!important;
+  letter-spacing:-.045em!important;
+}
+.brand-sub{
+  color:var(--ink-soft)!important;
+  font-size:8px!important;
+  letter-spacing:.14em!important;
+  font-weight:700!important;
+}
+
+/* Brand logo — simple geometric bank mark */
+.auth-logo{
+  width:60px!important;
+  height:60px!important;
+  padding:10px;
+  border-radius:17px;
+  background:linear-gradient(135deg,#5B4BDB,#7C6FF0);
+  box-shadow:0 12px 28px rgba(91,75,219,.24);
+}
+.auth-logo svg{
+  filter:none;
+}
+.auth-logo svg rect{
+  fill:transparent!important;
+}
+.auth-logo svg path{
+  fill:#fff!important;
+}
+
+/* Splash */
+.splash{
+  background:#FFFFFF!important;
+}
+.splash-brand{
+  margin-top:16px;
+  font-size:32px!important;
+}
+.splash-tag{
+  color:var(--ink-soft)!important;
+  font-size:10px!important;
+  letter-spacing:.12em!important;
+}
+.splash:before{
+  content:"";
+  position:absolute;
+  width:360px;
+  height:360px;
+  border:1px solid rgba(91,75,219,.09);
+  border-radius:50%;
+  box-shadow:
+    0 0 0 55px rgba(91,75,219,.025),
+    0 0 0 110px rgba(91,75,219,.018);
+}
+
+/* Auth screen */
+.auth-screen{
+  background:
+    radial-gradient(circle at 15% 15%,rgba(91,75,219,.13),transparent 25%),
+    #F7F8FB!important;
+}
+.auth-shell{
+  background:#fff!important;
+  border:1px solid var(--border)!important;
+  border-radius:22px!important;
+  box-shadow:var(--shadow-lg)!important;
+}
+.auth-brand-panel{
+  background:#101218!important;
+}
+.auth-brand-panel h2{
+  color:#fff!important;
+  font-weight:500!important;
+}
+.auth-brand-panel h2 em{
+  color:#A79DFF!important;
+}
+.auth-brand-panel p{
+  color:#AEB3BF!important;
+}
+.auth-kicker{
+  color:#A79DFF!important;
+}
+.auth-form-panel{
+  background:#fff;
+}
+.auth-heading h1{
+  font-weight:700!important;
+}
+.auth-heading p{
+  color:var(--ink-soft)!important;
+}
+
+/* Buttons */
+.btn-primary,
+.auth-submit{
+  background:#111318!important;
+  color:#fff!important;
+  box-shadow:0 8px 18px rgba(17,19,24,.15)!important;
+}
+.btn-primary:hover,
+.auth-submit:hover{
+  background:#252831!important;
+  transform:translateY(-1px);
+}
+.link-btn{
+  color:var(--primary)!important;
+}
+.auth-account-preview button{
+  color:var(--primary)!important;
+  background:var(--primary-tint)!important;
+}
+
+/* Cards and controls */
+.card,.metric-card,.panel,.table-card{
+  background:#fff!important;
+  border:1px solid var(--border)!important;
+  box-shadow:var(--shadow)!important;
+  border-radius:14px!important;
+}
+.card:hover,.metric-card:hover{
+  border-color:#D4CFFF!important;
+}
+input,select,textarea{
+  border-color:var(--border)!important;
+  color:var(--ink)!important;
+  background:#fff!important;
+}
+input::placeholder,textarea::placeholder{
+  color:#A3A8B3!important;
+}
+input:focus,select:focus,textarea:focus{
+  border-color:#A59BEE!important;
+  box-shadow:0 0 0 3px rgba(91,75,219,.08)!important;
+}
+
+/* Attractive but restrained accent usage */
+.status-active,.badge-success{
+  color:#08785B!important;
+  background:var(--mint-tint)!important;
+}
+.workspace-icon,.account-switch-icon{
+  background:var(--primary-tint)!important;
+  color:var(--primary)!important;
+}
+.account-switch-card.selected{
+  border-color:var(--primary)!important;
+  background:#FAF9FF!important;
+}
+.switch-check{
+  background:var(--primary)!important;
+}
+
+/* Dashboard navigation */
+.nav-item.active{
+  color:var(--primary)!important;
+  background:var(--primary-tint)!important;
+}
+.nav-item.active:before{
+  background:var(--primary)!important;
+}
+
+/* Better whitespace */
+.main{
+  padding-top:22px!important;
+}
+.section-head h2{
+  font-weight:700!important;
+}
+.metric-value{
+  font-weight:750!important;
+  letter-spacing:-.04em!important;
+}
+
+/* Optional image/photo treatment for dashboard hero areas */
+.dashboard-visual{
+  border-radius:16px;
+  overflow:hidden;
+  position:relative;
+  background:
+    linear-gradient(120deg,rgba(16,18,24,.88),rgba(91,75,219,.76)),
+    url("https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1400&q=80") center/cover;
+}
+.dashboard-visual:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(90deg,rgba(16,18,24,.75),transparent 70%);
+  pointer-events:none;
+}
+
+/* =========================================================
+   ENHANCED TYPOGRAPHY + PREMIUM UI (v2)
+   ========================================================= */
+:root{
+  --primary:#5B4BDB;
+  --primary-2:#7C6FF0;
+  --primary-tint:#F0EEFF;
+  --ws-accent:#5B4BDB;
+  --mint:#12B886;
+  --ink:#0F1117;
+  --ink-2:#1C1F2A;
+  --ink-soft:#5A6172;
+  --ink-faint:#8B93A7;
+  --bg:#F4F5F9;
+  --surface:#FFFFFF;
+  --border:#E3E6EF;
+  --radius:14px;
+  --font-display:'Instrument Serif',Georgia,serif;
+  --font-body:'DM Sans',Inter,system-ui,sans-serif;
+  --font-mono:'IBM Plex Mono','JetBrains Mono',ui-monospace,monospace;
+}
+
+html{font-size:15px;}
+body{
+  font-family:var(--font-body);
+  font-size:0.9375rem;
+  line-height:1.6;
+  letter-spacing:-0.011em;
+  color:var(--ink);
+  background:
+    radial-gradient(ellipse 80% 50% at 90% -10%,rgba(91,75,219,.07),transparent 50%),
+    radial-gradient(ellipse 60% 40% at 0% 80%,rgba(18,184,134,.04),transparent 45%),
+    var(--bg);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+h1,h2,h3,h4,.page-title,.section-title,.brand-name,.auth-heading h1,.auth-brand-panel h2{
+  font-family:var(--font-display);
+  font-weight:600;
+  letter-spacing:-0.03em;
+  color:var(--ink);
+}
+.page-title{font-size:1.75rem; line-height:1.2; margin:0;}
+.page-eyebrow{
+  font-family:var(--font-body);
+  font-size:0.6875rem;
+  font-weight:700;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--primary);
+  margin-bottom:6px;
+}
+.page-desc{
+  font-size:0.875rem;
+  color:var(--ink-soft);
+  line-height:1.55;
+  max-width:36rem;
+  margin-top:6px;
+}
+.section-title{font-size:1.05rem; font-weight:600; margin-bottom:4px;}
+.section-sub{font-size:0.8125rem; color:var(--ink-faint); margin-bottom:14px;}
+.kpi .val{
+  font-family:var(--font-display);
+  font-size:1.85rem;
+  font-weight:600;
+  letter-spacing:-0.04em;
+  line-height:1.1;
+}
+.kpi .lbl{font-size:0.78rem; color:var(--ink-soft); font-weight:500; margin-top:4px;}
+.cell-mono,.mono,.pulse-item .v{font-family:var(--font-mono); font-size:0.8125rem; letter-spacing:-0.02em;}
+
+/* Sidebar refinement */
+.sidebar{
+  width:272px;
+  background:linear-gradient(180deg,#0B0D14 0%,#12151F 100%)!important;
+  border-right:1px solid rgba(255,255,255,.06);
+}
+.brand{padding:20px 18px 18px;}
+.brand-name{font-size:1.15rem; color:#fff!important; font-weight:600;}
+.brand-sub{font-size:0.625rem; letter-spacing:0.14em; color:rgba(255,255,255,.45)!important; font-weight:600;}
+.nav-group-label{
+  font-size:0.625rem;
+  letter-spacing:0.14em;
+  color:rgba(255,255,255,.35);
+  padding:16px 12px 8px;
+  font-weight:700;
+}
+.nav-item{
+  padding:9px 12px;
+  border-radius:10px;
+  font-size:0.875rem;
+  font-weight:500;
+  color:rgba(255,255,255,.72)!important;
+  margin-bottom:2px;
+  transition:background .18s ease, color .18s ease, transform .15s ease;
+}
+.nav-item:hover{
+  background:rgba(255,255,255,.07)!important;
+  color:#fff!important;
+  transform:translateX(2px);
+}
+.nav-item.active{
+  background:rgba(91,75,219,.22)!important;
+  color:#fff!important;
+  box-shadow:inset 3px 0 0 var(--ws-accent)!important;
+  border-color:transparent!important;
+}
+.nav-item .octa{
+  width:28px; height:28px;
+  border-radius:8px;
+  background:rgba(255,255,255,.06)!important;
+  clip-path:none!important;
+}
+.nav-item.active .octa{
+  background:var(--ws-accent)!important;
+  color:#fff!important;
+}
+.nav-item .octa svg{stroke:currentColor; width:15px; height:15px;}
+.nav-access-note{
+  margin:18px 10px 8px;
+  padding:10px 12px;
+  border-radius:10px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.07);
+  font-size:0.7rem;
+  color:rgba(255,255,255,.45);
+  display:flex; align-items:center; gap:8px;
+  letter-spacing:0.02em;
+}
+.nav-access-note .nav-lock{color:var(--ws-accent); font-size:0.85rem;}
+
+/* Topbar */
+.topbar{
+  padding:12px 28px;
+  background:rgba(255,255,255,.92)!important;
+  backdrop-filter:blur(20px) saturate(1.2);
+  border-bottom:1px solid var(--border)!important;
+}
+.topbar h1{font-size:1.2rem; font-weight:600;}
+.crumb{font-size:0.72rem; font-weight:600; letter-spacing:0.04em; color:var(--ink-faint); text-transform:uppercase;}
+
+/* Cards */
+.card,.table-card,.pcard{
+  border-radius:var(--radius)!important;
+  border:1px solid var(--border)!important;
+  box-shadow:0 1px 2px rgba(15,17,23,.03), 0 8px 24px -6px rgba(15,17,23,.06)!important;
+  transition:box-shadow .25s ease, border-color .2s ease, transform .2s ease;
+}
+.card:hover,.pcard:hover{
+  box-shadow:0 4px 12px rgba(15,17,23,.06), 0 16px 40px -10px rgba(15,17,23,.1)!important;
+  border-color:#D5D0F5!important;
+  transform:translateY(-1px);
+}
+.kpi{position:relative; overflow:hidden;}
+.kpi::after{
+  content:'';
+  position:absolute; top:-20px; right:-20px; width:100px; height:100px;
+  background:radial-gradient(circle, rgba(91,75,219,.08), transparent 70%);
+  pointer-events:none;
+}
+.delta{
+  font-size:0.72rem;
+  font-weight:700;
+  padding:3px 8px;
+  border-radius:20px;
+  letter-spacing:0.01em;
+}
+
+/* Buttons */
+.btn{
+  font-weight:600;
+  font-size:0.8125rem;
+  letter-spacing:-0.01em;
+  border-radius:10px;
+  padding:9px 16px;
+  transition:all .2s ease;
+}
+.btn-primary{
+  background:linear-gradient(180deg, #6B5BE8 0%, var(--primary) 100%)!important;
+  color:#fff!important;
+  box-shadow:0 1px 2px rgba(91,75,219,.25), inset 0 1px 0 rgba(255,255,255,.15)!important;
+  border:none!important;
+}
+.btn-primary:hover{
+  background:linear-gradient(180deg, var(--primary) 0%, #4A3CC0 100%)!important;
+  box-shadow:0 6px 20px -4px rgba(91,75,219,.4)!important;
+  transform:translateY(-1px);
+}
+.btn-ghost{
+  background:#fff!important;
+  border:1px solid var(--border)!important;
+  color:var(--ink)!important;
+}
+.btn-ghost:hover{
+  border-color:var(--primary)!important;
+  background:var(--primary-tint)!important;
+  color:var(--primary)!important;
+}
+
+/* Tables */
+thead th{
+  font-size:0.6875rem!important;
+  font-weight:700!important;
+  letter-spacing:0.06em!important;
+  text-transform:uppercase!important;
+  color:var(--ink-faint)!important;
+  padding:12px 16px!important;
+  background:#F8F9FC!important;
+}
+tbody td{padding:13px 16px!important; font-size:0.875rem;}
+tbody tr:hover{background:#F8F9FC!important;}
+
+/* Badges */
+.badge{
+  font-size:0.6875rem;
+  font-weight:700;
+  letter-spacing:0.02em;
+  padding:4px 10px;
+  border-radius:20px;
+}
+
+/* Pulse bar */
+.pulse-bar{
+  background:linear-gradient(90deg, #0B0D14, #1A1D2A 50%, #12151F)!important;
+  padding:8px 28px;
+  font-size:0.75rem;
+  border-bottom:1px solid rgba(255,255,255,.05);
+}
+.pulse-item .k{color:rgba(255,255,255,.5)!important; font-weight:500;}
+.pulse-item .v{color:#E8E4FF!important; font-weight:600;}
+
+/* Content spacing */
+.content{padding:28px 32px 72px;}
+.page-head{margin-bottom:24px;}
+.grid{gap:18px;}
+
+/* Auth polish */
+.auth-heading h1{font-size:2.1rem; letter-spacing:-0.035em;}
+.auth-brand-panel h2{font-size:2.6rem; line-height:1.08; font-weight:500;}
+.auth-kicker{letter-spacing:0.16em; font-size:0.65rem; font-weight:700;}
+
+/* Workspace accent indicator on active nav */
+.nav-item.active .octa{background:var(--ws-accent)!important;}
+
+/* Restricted feature toast feel */
+.toast{
+  font-size:0.8125rem;
+  font-weight:500;
+  letter-spacing:-0.01em;
+  border-radius:12px;
+  padding:12px 18px;
+}
+
+/* Kanban cards */
+.kcard{border-radius:12px; border:1px solid var(--border);}
+.kcol{border-radius:14px;}
+
+/* Form fields */
+.field label{font-size:0.75rem; font-weight:600; letter-spacing:0.02em; color:var(--ink-soft);}
+.field input,.field select,.field textarea{
+  border-radius:10px!important;
+  font-size:0.875rem!important;
+  padding:10px 12px!important;
+}
+
+/* Mobile */
+@media (max-width:900px){
+  .content{padding:18px 16px 56px;}
+  .page-title{font-size:1.4rem;}
+  .kpi .val{font-size:1.5rem;}
+}
+
+</style>
+</head>
+<body>
+
+
+<div id="splash">
+  <div class="splash-logo">
+    <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="80" height="80" rx="18" fill="#C9A227"/>
+      <path d="M22 54V26h10l8 19.5L48 26h10v28h-8V36.5L42 54h-6L28 36.5V54H22z" fill="#0A2540"/>
+    </svg>
+  </div>
+  <div class="splash-brand">Atlas Bank</div>
+  <div class="splash-tag">Digital Banking Platform</div>
+  <div class="splash-bar"><div class="splash-bar-fill"></div></div><div class="splash-status">Preparing secure banking workspace</div>
+</div>
+
+
+<!-- Authentication / account switch layer -->
+<div id="authScreen" class="auth-screen hidden">
+  <div class="auth-shell">
+    <div class="auth-brand-panel">
+      <div class="auth-logo">
+      <svg viewBox="0 0 80 80" fill="none" aria-label="Atlas Bank logo">
+        <path d="M19 57L39.5 18L61 57H51.5L46.5 47H32L27 57H19Z" fill="white"/>
+        <path d="M35.5 40H43L39.25 32.5L35.5 40Z" fill="#111318"/>
+      </svg>
+    </div>
+      <div class="auth-kicker">ATLAS Digital BANK</div>
+      <h2>Financial software built for<br><em>speed & control.</em></h2>
+      <p>A modern financial operations platform for accounts, payments, financing, analytics and compliance.</p>
+      
+      
+    </div>
+
+    <div class="auth-form-panel">
+      <div class="auth-mobile-brand">Atlas Bank</div>
+      <div class="auth-heading">
+        <span class="secure-badge">● Secure sign-in</span>
+        <h1>Welcome back</h1>
+        <p>Sign in to your Digital banking workspace.</p>
+      </div>
+
+      <div class="auth-account-preview">
+        <div class="avatar auth-avatar">FA</div>
+        <div><b>Fatima Anwar</b><small>Operations Lead · Default workspace</small></div>
+        <button type="button" onclick="openWorkspaceChooser()">Switch</button>
+      </div>
+
+      <form id="loginForm" class="login-form">
+        <div class="field auth-field"><label>Email or User ID</label><input id="loginUser" autocomplete="username" placeholder="Enter any user ID"></div>
+        <div class="field auth-field"><label>Password</label><div class="password-wrap"><input id="loginPassword" type="password" autocomplete="current-password" placeholder="Enter any password"><button type="button" onclick="togglePassword()">Show</button></div></div>
+        <div class="auth-row"><label class="remember"><input type="checkbox" checked> Keep me signed in</label><button type="button" class="link-btn" onclick="toast('Password recovery flow opened')">Forgot password?</button></div>
+        <button class="btn btn-primary auth-submit" type="submit"><span>Sign in securely</span><span>→</span></button>
+      </form>
+
+      <div class="auth-divider"><span>or</span></div>
+      <button class="biometric-btn" type="button" onclick="toast('Biometric authentication is ready for this demo')">◉ <span>Continue with biometric authentication</span></button>
+
+      <div class="auth-footer"><span>Protected by MFA</span><span>•</span><span>Session encryption enabled</span><span>•</span><span>Help</span></div>
+    </div>
+  </div>
+</div>
+
+<div id="workspaceChooser" class="workspace-overlay">
+  <div class="workspace-dialog">
+    <button class="dialog-close" onclick="closeWorkspaceChooser()">×</button>
+    <span class="secure-badge">● Account switch</span>
+    <h2>Choose your banking account</h2>
+    <p>Switch between your operational workspaces without signing out.</p>
+    <div class="account-switch-grid">
+      <button class="account-switch-card selected" data-ws="Operations" onclick="switchWorkspace('Operations','Operations Lead')">
+        <span class="account-switch-icon">◈</span><b>Operations</b><small>Core banking & branch operations</small><span class="switch-check">✓</span>
+      </button>
+      <button class="account-switch-card" data-ws="Customer Banking" onclick="switchWorkspace('Customer Banking','Retail Banking')">
+        <span class="account-switch-icon">◉</span><b>Customer Banking</b><small>Accounts, payments & services</small><span class="switch-check">✓</span>
+      </button>
+      <button class="account-switch-card" data-ws="Risk & Compliance" onclick="switchWorkspace('Risk & Compliance','Compliance Officer')">
+        <span class="account-switch-icon">◇</span><b>Risk & Compliance</b><small>Governance review, AML & governance</small><span class="switch-check">✓</span>
+      </button>
+      <button class="account-switch-card" data-ws="Investment Desk" onclick="switchWorkspace('Investment Desk','Investment Manager')">
+        <span class="account-switch-icon">◌</span><b>Investment Desk</b><small>Investment, Bonds & Investments & profit pools</small><span class="switch-check">✓</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="app" id="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-mark"><svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="40" height="40" rx="10" fill="#C9A227"/><path d="M12 28V13h5.2l4.2 10.2L25.6 13H31v15h-4.2v-8.8L22.4 28h-3.6l-4.4-8.8V28H12z" fill="#0A2540"/></svg></div>
+      <div>
+        <div class="brand-name">Atlas Bank</div>
+        <div class="brand-sub">Digital Banking</div>
+      </div>
+    </div>
+    <nav class="nav-scroll" id="navScroll"></nav>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" id="hamburger">☰</button>
+        <div>
+          <div class="crumb" id="crumb">Overview</div>
+          <h1 id="pageHeading">Dashboard</h1>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="workspace-switcher">
+          <button class="workspace-trigger" id="workspaceTrigger" type="button">
+            <span class="workspace-icon">◈</span>
+            <span><b id="workspaceName">Operations</b><small>Workspace</small></span>
+            <span class="chevron">⌄</span>
+          </button>
+          <div class="workspace-menu" id="workspaceMenu">
+            <button data-workspace="Operations" data-sub="Core banking operations">◈ <span><b>Operations</b><small>Core banking & branch ops</small></span></button>
+            <button data-workspace="Customer Banking" data-sub="Accounts & everyday services">◉ <span><b>Customer Banking</b><small>Accounts & everyday services</small></span></button>
+            <button data-workspace="Risk & Compliance" data-sub="Governance controls">◇ <span><b>Risk & Compliance</b><small>AML, risk & governance</small></span></button>
+            <button data-workspace="Investment Desk" data-sub="Pools & treasury">◌ <span><b>Investment Desk</b><small>Pools, treasury & trade</small></span></button>
+          </div>
+        </div>
+
+        <div class="service-menu-wrap">
+          <button class="service-trigger" id="serviceTrigger" type="button">
+            <span>Account Services</span><span class="service-count">6</span><span>⌄</span>
+          </button>
+          <div class="service-menu" id="serviceMenu">
+            <div class="service-menu-head"><b>Account Services</b><span>Customer access</span></div>
+            <button onclick="openAccountService('Accounts & Balances','View current, savings and investment accounts.')">◫ <span>Accounts & Balances<small>View balances & account details</small></span></button>
+            <button onclick="openAccountService('Transfers & Payments','Transfer funds, pay bills and manage beneficiaries.')">⇄ <span>Transfers & Payments<small>Transfers, bills & beneficiaries</small></span></button>
+            <button onclick="openAccountService('Financing','Asset Finance, Leasing and Business Finance financing.')">◇ <span>Financing<small>Asset Finance · Leasing · Business Finance</small></span></button>
+            <button onclick="openAccountService('Cards & Digital Wallet','Manage debit cards and digital payment access.')">▣ <span>Cards & Digital Wallet<small>Cards, limits & wallet access</small></span></button>
+            <button onclick="openAccountService('Investments & Profit','Investment investments, Bonds & Investments and profit statements.')">◌ <span>Investments & Profit<small>Investment · Bonds & Investments · profit</small></span></button>
+            <button onclick="openAccountService('Statements & Certificates','Download statements, tax documents and certificates.')">▤ <span>Statements & Certificates<small>Statements & official documents</small></span></button>
+          </div>
+        </div>
+
+        <div class="search-box"><span>⌕</span><input placeholder="Search customers, contracts, txns…" id="globalSearch"></div>
+        <button class="icon-btn" title="Alerts"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="dot"></span></button>
+        <button class="icon-btn" title="Help"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></button>
+        <div class="profile profile-menu-wrap">
+          <button class="profile-trigger" id="profileTrigger" type="button">
+            <div class="avatar">FA</div>
+            <div class="profile-copy">
+              <div class="profile-name">Fatima Anwar</div>
+              <div class="profile-role">Operations Lead</div>
+            </div>
+            <span class="chevron">⌄</span>
+          </button>
+          <div class="profile-menu" id="profileMenu">
+            <div class="profile-menu-user"><div class="avatar large">FA</div><div><b>Fatima Anwar</b><small>Operations Lead · Karachi</small></div></div>
+            <button onclick="openAccountService('My Profile','Manage your profile, contact details and authentication settings.')">◎ My Profile</button>
+            <button onclick="openAccountService('Security Settings','Review MFA, trusted devices and recent sign-in activity.')">▣ Security Settings</button>
+            <button onclick="openAccountService('Notification Preferences','Manage banking and operational alerts.')">◌ Notification Preferences</button>
+            <button class="logout-action" onclick="showLogin('Signed out successfully')">↪ Sign out</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pulse-bar" id="pulseBar" style="background:linear-gradient(90deg,#0A1628,#123050 40%,#1A3A5C)"></div>
+
+    <div class="content" id="content"></div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal" id="modalBox"></div>
+</div>
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+/* =========================================================
+   DATA LAYER
+========================================================= */
+const fmt = n => '$' + Number(n).toLocaleString(undefined,{maximumFractionDigits:0});
+const pct = n => n.toFixed(1)+'%';
+const uid = p => p + Math.floor(1000+Math.random()*9000);
+const todayPlus = d => { const t=new Date(); t.setDate(t.getDate()+d); return t.toISOString().slice(0,10); };
+
+const DB = {
+  customers:[
+    {id:'CU-2201',name:'Hamza Rahman',segment:'Retail',kyc:'Verified',product:'Auto Leasing',balance:18400,joined:'2023-02-11'},
+    {id:'CU-2202',name:'Sara Textiles Ltd',segment:'Corporate',kyc:'Verified',product:'Working Capital',balance:214000,joined:'2021-09-04'},
+    {id:'CU-2203',name:'Ayesha Khan',segment:'Retail',kyc:'Pending',product:'Home Asset Finance',balance:5200,joined:'2024-06-19'},
+    {id:'CU-2204',name:'Noor Traders',segment:'SME',kyc:'Verified',product:'Trade Finance',balance:76500,joined:'2022-11-30'},
+    {id:'CU-2205',name:'Bilal Siddiqui',segment:'Retail',kyc:'Flagged',product:'Investment Savings',balance:3100,joined:'2024-01-08'},
+    {id:'CU-2206',name:'Crescent Logistics',segment:'Corporate',kyc:'Verified',product:'Fleet Finance',balance:340200,joined:'2020-05-22'},
+    {id:'CU-2207',name:'Maryam Yousuf',segment:'Retail',kyc:'Verified',product:'Savings Plus',balance:12800,joined:'2023-08-14'},
+    {id:'CU-2208',name:'Al-Farooq Foods',segment:'SME',kyc:'Pending',product:'Trade Finance',balance:41200,joined:'2024-03-02'},
+  ],
+  products:[
+    {name:'Home Asset Finance',type:'Asset Financing',rate:'6.9% fixed',tenure:'Up to 25 yrs',status:'Active'},
+    {name:'Auto Leasing',type:'Asset Financing',rate:'7.4% fixed',tenure:'Up to 7 yrs',status:'Active'},
+    {name:'Business Finance Business Finance',type:'Partnership',rate:'Variable',tenure:'Up to 20 yrs',status:'Active'},
+    {name:'Investment Savings',type:'Deposit',rate:'5.2% p.a.',tenure:'3–36 months',status:'Active'},
+    {name:'Investment Investment Certificate',type:'Investment',rate:'6.1% indicative',tenure:'1–5 yrs',status:'Active'},
+    {name:'Personal Finance',type:'Social Finance',rate:'From 8.5%',tenure:'Up to 12 months',status:'Restricted'},
+    {name:'Trade Finance — LC',type:'Trade',rate:'Cost + margin',tenure:'Per shipment',status:'Active'},
+    {name:'Business Finance SME Facility',type:'Partnership',rate:'Variable',tenure:'Up to 10 yrs',status:'Under Review'},
+  ],
+  pools:[
+    {name:'General Investment Pool',size:4200000,ratio:'70:30',lastProfit:'6.8%'},
+    {name:'Corporate Investment Pool',size:2650000,ratio:'60:40',lastProfit:'7.5%'},
+    {name:'SME Growth Pool',size:980000,ratio:'65:35',lastProfit:'6.2%'},
+  ],
+  trade:[
+    {id:'TF-3301',client:'Noor Traders',type:'Letter of Credit',amount:82000,stage:'Issued'},
+    {id:'TF-3302',client:'Crescent Logistics',type:'Trade Finance',amount:154000,stage:'Under Review'},
+    {id:'TF-3303',client:'Al-Farooq Foods',type:'Shipping Guarantee',amount:26500,stage:'Pending Docs'},
+    {id:'TF-3304',client:'Sara Textiles Ltd',type:'Letter of Credit',amount:118400,stage:'Settled'},
+  ],
+  assets:[
+    {id:'AS-101',name:'Head Office Building',category:'Property',value:1850000,dep:'2.5%/yr'},
+    {id:'AS-102',name:'Branch Fleet Vehicles',category:'Vehicles',value:210000,dep:'15%/yr'},
+    {id:'AS-103',name:'Core Banking Servers',category:'IT Equipment',value:96000,dep:'20%/yr'},
+    {id:'AS-104',name:'Karachi Branch Fit-out',category:'Leasehold',value:145000,dep:'8%/yr'},
+  ],
+  risks:[
+    {id:'RK-01',name:'Interest-rate benchmark volatility',likelihood:4,impact:4,owner:'Treasury'},
+    {id:'RK-02',name:'Regulatory non-compliance event',likelihood:2,impact:5,owner:'Compliance'},
+    {id:'RK-03',name:'Counterparty default — Trade Finance',likelihood:3,impact:4,owner:'Credit Risk'},
+    {id:'RK-04',name:'Core banking downtime',likelihood:2,impact:3,owner:'Technology'},
+    {id:'RK-05',name:'KYC/AML gap',likelihood:2,impact:4,owner:'Compliance'},
+    {id:'RK-06',name:'Branch cash handling error',likelihood:3,impact:2,owner:'Operations'},
+  ],
+  resolutions:[
+    {id:'SB-11',topic:'Approval — Business Finance SME Facility product',date:'2026-06-02',status:'Approved'},
+    {id:'SB-12',topic:'Review — Late payment fee policy',date:'2026-07-14',status:'Under Review'},
+    {id:'SB-13',topic:'Approval — Investment Investment Certificate renewal',date:'2026-07-28',status:'Approved'},
+    {id:'SB-14',topic:'Query — Deposit fee structure',date:'2026-08-04',status:'Pending'},
+  ],
+  compliance:[
+    {t:'Quarterly Governance audit submitted to board',done:true},
+    {t:'AML transaction monitoring thresholds reviewed',done:true},
+    {t:'Data privacy impact assessment updated',done:false},
+    {t:'Capital adequacy report filed with regulator',done:true},
+    {t:'Business continuity plan re-certified',done:false},
+  ],
+  transactions:[
+    {id:'TX-90011',from:'CU-2202',to:'Noor Traders',amount:15400,type:'Transfer',status:'Completed'},
+    {id:'TX-90012',from:'CU-2201',to:'Utility Co.',amount:220,type:'Bill Payment',status:'Completed'},
+    {id:'TX-90013',from:'CU-2206',to:'CU-2204',amount:42000,type:'Trade Settlement',status:'Processing'},
+    {id:'TX-90014',from:'CU-2205',to:'CU-2201',amount:900,type:'Transfer',status:'Failed'},
+  ],
+  fx:[
+    {pair:'USD/PKR',rate:278.45,chg:0.4},
+    {pair:'EUR/PKR',rate:302.10,chg:-0.2},
+    {pair:'GBP/PKR',rate:353.80,chg:0.6},
+    {pair:'SAR/PKR',rate:74.20,chg:0.1},
+  ],
+  branches:[
+    {id:'BR-01',name:'Karachi — Clifton',manager:'Imran Sheikh',staff:24,rating:4.6},
+    {id:'BR-02',name:'Lahore — Gulberg',manager:'Sadia Malik',staff:19,rating:4.4},
+    {id:'BR-03',name:'Islamabad — F-7',manager:'Usman Tariq',staff:15,rating:4.7},
+  ],
+  employees:[
+    {id:'EM-501',name:'Imran Sheikh',role:'Branch Manager',branch:'Karachi — Clifton',status:'Active'},
+    {id:'EM-502',name:'Zainab Aslam',role:'Relationship Officer',branch:'Karachi — Clifton',status:'Active'},
+    {id:'EM-503',name:'Sadia Malik',role:'Branch Manager',branch:'Lahore — Gulberg',status:'Active'},
+    {id:'EM-504',name:'Fahad Iqbal',role:'Credit Analyst',branch:'Head Office',status:'On Leave'},
+  ],
+  tickets:{
+    Open:[{id:'TK-771',t:'Mobile app login OTP delay',m:'CU-2203 · High'},{id:'TK-772',t:'Dispute on bill payment TX-90012',m:'CU-2201 · Medium'}],
+    'In Progress':[{id:'TK-768',t:'Profit statement discrepancy',m:'CU-2206 · High'}],
+    Resolved:[{id:'TK-760',t:'Card block request',m:'CU-2205 · Low'},{id:'TK-759',t:'Branch appointment reschedule',m:'CU-2202 · Low'}]
+  },
+  contracts:[
+    {id:'CT-601',customer:'Hamza Rahman',product:'Auto Leasing',signed:'2024-02-15',expiry:'2029-02-15',status:'Active'},
+    {id:'CT-602',customer:'Sara Textiles Ltd',product:'Working Capital',signed:'2021-09-10',expiry:'2028-09-10',status:'Active'},
+    {id:'CT-603',customer:'Ayesha Khan',product:'Home Asset Finance',signed:'2024-06-25',expiry:'2049-06-25',status:'Pending Signature'},
+    {id:'CT-604',customer:'Noor Traders',product:'Trade Finance',signed:'2022-12-01',expiry:'2026-12-01',status:'Renewal Due'},
+  ],
+  applications:[],
+  collections:{
+    'Early (1-30d)':[{id:'CL-21',t:'Al-Farooq Foods — Trade Finance',m:'$3,200 overdue'}],
+    'Mid (31-90d)':[{id:'CL-22',t:'Bilal Siddiqui — Investment Savings',m:'$540 overdue'}],
+    'Recovery (90d+)':[{id:'CL-23',t:'Legacy account — closed branch',m:'$11,800 overdue'}]
+  },
+  productLifecycle:[
+    {name:'Home Asset Finance',stage:'Mature',adoption:82},
+    {name:'Auto Leasing',stage:'Growth',adoption:64},
+    {name:'Business Finance Business Finance',stage:'Growth',adoption:47},
+    {name:'Investment Investment Certificate',stage:'Introduction',adoption:21},
+    {name:'Business Finance SME Facility',stage:'Pilot',adoption:8},
+  ],
+  accessLogs:[
+    {id:'LG-1',user:'Fatima Anwar',action:'Approved financing application FA-1042',time:'09:14'},
+    {id:'LG-2',user:'System',action:'Failed login attempt — user bsiddiqui',time:'08:52'},
+    {id:'LG-3',user:'Imran Sheikh',action:'Exported branch performance report',time:'08:30'},
+    {id:'LG-4',user:'Zainab Aslam',action:'Updated KYC status — CU-2203',time:'08:11'},
+  ],
+  roles:[
+    {role:'Teller',customers:'View',payments:'Initiate',reports:'—',compliance:'—'},
+    {role:'Branch Manager',customers:'Edit',payments:'Approve',reports:'View',compliance:'View'},
+    {role:'Compliance Officer',customers:'View',payments:'View',reports:'Edit',compliance:'Edit'},
+    {role:'Executive',customers:'View',payments:'View',reports:'Edit',compliance:'View'},
+  ],
+  dataSources:[
+    {name:'Core Banking System',quality:96,records:'1.2M'},
+    {name:'CRM / Customer 360',quality:88,records:'340K'},
+    {name:'Trade Finance Platform',quality:91,records:'56K'},
+    {name:'HR & Payroll',quality:99,records:'412'},
+  ],
+  incidents:[
+    {id:'IN-501',system:'Mobile Banking API',sev:'Medium',status:'Monitoring',time:'2h ago'},
+    {id:'IN-502',system:'Card Switch Gateway',sev:'Low',status:'Resolved',time:'1d ago'},
+  ],
+  integrations:[
+    {name:'National Payment Switch',status:'Healthy',lastSync:'2 min ago'},
+    {name:'Credit Bureau',status:'Healthy',lastSync:'14 min ago'},
+    {name:'Regulatory Reporting Hub',status:'Degraded',lastSync:'3 hrs ago'},
+    {name:'SWIFT Messaging',status:'Healthy',lastSync:'6 min ago'},
+    {name:'Card Network Gateway',status:'Healthy',lastSync:'40 min ago'},
+  ],
+  initiatives:[
+    {name:'Digital onboarding rollout',owner:'Retail',progress:72,due:'Q4 2026'},
+    {name:'SME financing expansion',owner:'Corporate',progress:45,due:'Q1 2027'},
+    {name:'Core banking modernization',owner:'Technology',progress:31,due:'Q2 2027'},
+  ]
+};
+
+/* =========================================================
+   MODULE REGISTRY + WORKSPACE ACCESS CONTROL
+========================================================= */
+const MODULES = [
+  {id:'overview', group:'', label:'Overview', mono:'OV'},
+  {id:'customers', group:'Customer & Products', label:'Customer Services', mono:'CS'},
+  {id:'products', group:'Customer & Products', label:'Financial Products', mono:'IF'},
+  {id:'applications', group:'Customer & Products', label:'Financing Application', mono:'FA'},
+  {id:'contracts', group:'Customer & Products', label:'Contract Management', mono:'CT'},
+  {id:'productmgmt', group:'Customer & Products', label:'Product Management', mono:'PM'},
+  {id:'investment', group:'Money & Markets', label:'Investment & Profit Management', mono:'IP'},
+  {id:'trade', group:'Money & Markets', label:'Trade & Business', mono:'TB'},
+  {id:'payments', group:'Money & Markets', label:'Payment & Settlement', mono:'PS'},
+  {id:'treasury', group:'Money & Markets', label:'Treasury', mono:'TR'},
+  {id:'collections', group:'Money & Markets', label:'Collections & Recovery', mono:'CR'},
+  {id:'accounting', group:'Finance & Risk', label:'Accounting & Financial Mgmt', mono:'AC'},
+  {id:'assets', group:'Finance & Risk', label:'Asset Management', mono:'AM'},
+  {id:'risk', group:'Finance & Risk', label:'Risk Management', mono:'RM'},
+  {id:'compliance', group:'Finance & Risk', label:'Compliance & Governance', mono:'CG'},
+  {id:'branches', group:'Operations', label:'Branch & Employee Mgmt', mono:'BE'},
+  {id:'support', group:'Operations', label:'Customer Support', mono:'SP'},
+  {id:'security', group:'Operations', label:'Security', mono:'SC'},
+  {id:'data', group:'Operations', label:'Data Management', mono:'DM'},
+  {id:'infra', group:'Operations', label:'Technology & Infrastructure', mono:'TI'},
+  {id:'integration', group:'Operations', label:'Integration', mono:'IN'},
+  {id:'analytics', group:'Insights', label:'Analytics & Reporting', mono:'AR'},
+  {id:'executive', group:'Insights', label:'Executive Management', mono:'EX'},
+];
+
+let currentWorkspace = 'Operations';
+
+/* Workspace → allowed module IDs. Restricted accounts only see their features. */
+const WORKSPACE_ACCESS = {
+  'Operations': [
+    'overview','customers','products','applications','contracts','productmgmt',
+    'payments','collections','branches','support','security','data','infra','integration','analytics'
+  ],
+  'Customer Banking': [
+    'overview','customers','products','applications','contracts','payments','support','analytics'
+  ],
+  'Risk & Compliance': [
+    'overview','customers','risk','compliance','collections','security','data','analytics','executive'
+  ],
+  'Investment Desk': [
+    'overview','investment','treasury','trade','products','accounting','assets','analytics','executive'
+  ]
+};
+
+const WORKSPACE_META = {
+  'Operations': { role:'Operations Lead', accent:'#5B4BDB', pulse:[
+    ['Investment pool ratio','70:30'],['Liquidity coverage','148%'],['Financing-to-deposit','76.2%'],['Compliance score','98.4%'],['System uptime','99.97%']
+  ]},
+  'Customer Banking': { role:'Retail Banking', accent:'#0B5CAB', pulse:[
+    ['Active customers','18,204'],['KYC verified','94.2%'],['Avg. wait time','1.8m'],['Ticket resolution','92%'],['CSAT','4.6 / 5']
+  ]},
+  'Risk & Compliance': { role:'Compliance Officer', accent:'#C9A227', pulse:[
+    ['Open risks','6'],['AML alerts today','12'],['Compliance score','98.4%'],['Board items pending','2'],['NPL ratio','1.9%']
+  ]},
+  'Investment Desk': { role:'Investment Manager', accent:'#12B886', pulse:[
+    ['Pool AUM','$7.83M'],['Last return','6.8%'],['FX pairs live','4'],['Liquidity LCR','148%'],['Settlements today','14']
+  ]}
+};
+
+/* =========================================================
+   NAV RENDER
+========================================================= */
+const navScroll = document.getElementById('navScroll');
+const NAV_ICONS = {
+  'overview': `<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>`,
+  'customers': `<svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+  'products': `<svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>`,
+  'applications': `<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`,
+  'contracts': `<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15l2 2 4-4"/></svg>`,
+  'productmgmt': `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
+  'investment': `<svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>`,
+  'trade': `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`,
+  'payments': `<svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>`,
+  'treasury': `<svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`,
+  'collections': `<svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`,
+  'accounting': `<svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`,
+  'assets': `<svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
+  'risk': `<svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
+  'compliance': `<svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+  'branches': `<svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+  'support': `<svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`,
+  'security': `<svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`,
+  'data': `<svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>`,
+  'infra': `<svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>`,
+  'integration': `<svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>`,
+  'analytics': `<svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`,
+  'executive': `<svg viewBox="0 0 24 24"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>`,
+};
+
+function getAllowedModules(){
+  const allowed = WORKSPACE_ACCESS[currentWorkspace] || WORKSPACE_ACCESS['Operations'];
+  return MODULES.filter(m => allowed.includes(m.id));
+}
+
+function renderNav(){
+  navScroll.innerHTML = '';
+  const allowed = getAllowedModules();
+  let lastGroup = null;
+  allowed.forEach(m=>{
+    if(m.group !== lastGroup){
+      const gd = document.createElement('div'); gd.className='nav-group-label'; gd.textContent = m.group || 'Home';
+      navScroll.appendChild(gd);
+      lastGroup = m.group;
+    }
+    const a = document.createElement('a');
+    a.href='#'; a.className='nav-item'; a.dataset.id=m.id;
+    const icon = NAV_ICONS[m.id] || m.mono;
+    a.innerHTML = `<span class="octa">${icon}</span><span class="lbl">${m.label}</span>`;
+    a.onclick = (e)=>{ e.preventDefault(); goTo(m.id); if(window.innerWidth<=900) document.getElementById('sidebar').classList.remove('open'); };
+    navScroll.appendChild(a);
+  });
+  // Access notice
+  const notice = document.createElement('div');
+  notice.className = 'nav-access-note';
+  notice.innerHTML = `<span class="nav-lock">◈</span> <span>${currentWorkspace} · restricted view</span>`;
+  navScroll.appendChild(notice);
+}
+
+document.getElementById('hamburger').onclick = ()=> document.getElementById('sidebar').classList.toggle('open');
+
+function goTo(id){
+  const allowed = WORKSPACE_ACCESS[currentWorkspace] || WORKSPACE_ACCESS['Operations'];
+  if(!allowed.includes(id)){
+    toast('This module is not available in the ' + currentWorkspace + ' workspace');
+    id = allowed[0] || 'overview';
+  }
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active', n.dataset.id===id));
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active', v.id==='view-'+id));
+  const m = MODULES.find(x=>x.id===id);
+  if(m){
+    document.getElementById('crumb').textContent = (m.group || 'Home') + ' · ' + currentWorkspace;
+    document.getElementById('pageHeading').textContent = m.label;
+  }
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function updatePulseBar(){
+  const meta = WORKSPACE_META[currentWorkspace] || WORKSPACE_META['Operations'];
+  const items = meta.pulse.map((p,i)=>`
+    <div class="pulse-item"><span class="k">${p[0]}</span><span class="v">${p[1]}</span></div>
+    ${i < meta.pulse.length-1 ? '<div class="pulse-sep"></div>' : ''}
+  `).join('');
+  document.getElementById('pulseBar').innerHTML = items;
+}
+
+function applyWorkspaceTheme(){
+  const meta = WORKSPACE_META[currentWorkspace] || WORKSPACE_META['Operations'];
+  document.documentElement.style.setProperty('--ws-accent', meta.accent);
+  document.body.dataset.workspace = currentWorkspace.replace(/\s+/g,'-').toLowerCase();
+  const roleEl = document.querySelector('.profile-role');
+  if(roleEl) roleEl.textContent = meta.role;
+  updatePulseBar();
+}
+
+renderNav();
+applyWorkspaceTheme();
+
+/* =========================================================
+   PULSE BAR (workspace-aware)
+========================================================= */
+updatePulseBar();
+
+/* =========================================================
+   HELPERS
+========================================================= */
+function toast(msg){
+  const w = document.getElementById('toastWrap');
+  const t = document.createElement('div'); t.className='toast'; t.innerHTML = `✓ ${msg}`;
+  w.appendChild(t);
+  setTimeout(()=>{ t.style.opacity='0'; t.style.transition='opacity .3s'; setTimeout(()=>t.remove(),300); }, 2600);
+}
+function openModal(html){
+  document.getElementById('modalBox').innerHTML = html;
+  document.getElementById('overlay').classList.add('open');
+}
+function closeModal(){ document.getElementById('overlay').classList.remove('open'); }
+document.getElementById('overlay').addEventListener('click', e=>{ if(e.target.id==='overlay') closeModal(); });
+
+function badge(text, kind){ return `<span class="badge ${kind}">${text}</span>`; }
+function statusKind(s){
+  s = s.toLowerCase();
+  if(['active','verified','completed','approved','resolved','healthy','done','settled'].some(k=>s.includes(k))) return 'green';
+  if(['pending','review','processing','monitoring','on leave','degraded','due'].some(k=>s.includes(k))) return 'gold';
+  if(['flagged','failed','restricted','overdue'].some(k=>s.includes(k))) return 'red';
+  if(['open','issued','new'].some(k=>s.includes(k))) return 'blue';
+  return 'grey';
+}
+
+/* Generic sortable / searchable table */
+function DataTable(root, {columns, rows, addBtn}){
+  let sortKey = null, sortDir = 1, query = '';
+  function renderRows(){
+    let data = rows.filter(r => JSON.stringify(r).toLowerCase().includes(query.toLowerCase()));
+    if(sortKey) data = [...data].sort((a,b)=>{
+      let x=a[sortKey], y=b[sortKey];
+      if(typeof x==='number') return (x-y)*sortDir;
+      return String(x).localeCompare(String(y))*sortDir;
+    });
+    const tbody = root.querySelector('tbody');
+    tbody.innerHTML = data.length ? data.map(r=>`<tr>${columns.map(c=>`<td>${c.render? c.render(r): (r[c.key]??'')}</td>`).join('')}</tr>`).join('')
+      : `<tr class="empty-row"><td colspan="${columns.length}">No records match your search.</td></tr>`;
+  }
+  root.innerHTML = `
+    <div class="table-toolbar">
+      <div class="search-box"><span>⌕</span><input placeholder="Filter records…"></div>
+      ${addBtn? `<button class="btn btn-primary btn-sm">+ ${addBtn}</button>`:''}
+    </div>
+    <div style="overflow-x:auto;">
+    <table><thead><tr>${columns.map(c=>`<th data-key="${c.key}">${c.label} <span class="arrow"></span></th>`).join('')}</tr></thead>
+    <tbody></tbody></table>
+    </div>`;
+  renderRows();
+  root.querySelector('.search-box input').addEventListener('input', e=>{ query=e.target.value; renderRows(); });
+  root.querySelectorAll('thead th').forEach(th=>{
+    th.addEventListener('click', ()=>{
+      const k = th.dataset.key;
+      sortDir = (sortKey===k) ? -sortDir : 1; sortKey = k;
+      root.querySelectorAll('thead th .arrow').forEach(a=>a.textContent='');
+      th.querySelector('.arrow').textContent = sortDir===1 ? '↑':'↓';
+      renderRows();
+    });
+  });
+  if(addBtn){
+    root.querySelector('.table-toolbar .btn').addEventListener('click', ()=> addBtn.onClick && addBtn.onClick());
+  }
+  return { refresh: renderRows };
+}
+
+function barChart(data, opts={}){
+  const max = Math.max(...data.map(d=>d.value)) * 1.15;
+  return `<div>${data.map(d=>`
+    <div class="bar-row">
+      <div class="bl">${d.label}</div>
+      <div class="bt"><div class="bf" style="width:${(d.value/max*100).toFixed(1)}%; background:${d.color||'var(--primary)'}"></div></div>
+      <div class="bv">${opts.money? fmt(d.value): d.value}</div>
+    </div>`).join('')}</div>`;
+}
+
+function gauge(value, max, label, color){
+  const pctv = Math.min(value/max,1);
+  const r=54, c=2*Math.PI*r, off = c*(1-pctv);
+  return `<svg viewBox="0 0 140 140" width="150" height="150">
+    <circle cx="70" cy="70" r="${r}" fill="none" stroke="var(--surface-2)" stroke-width="14"/>
+    <circle cx="70" cy="70" r="${r}" fill="none" stroke="${color||'var(--primary)'}" stroke-width="14"
+      stroke-dasharray="${c}" stroke-dashoffset="${off}" stroke-linecap="round" transform="rotate(-90 70 70)"/>
+    <text x="70" y="66" text-anchor="middle" font-family="JetBrains Mono" font-size="20" font-weight="700" fill="var(--ink)">${Math.round(pctv*100)}%</text>
+    <text x="70" y="86" text-anchor="middle" font-family="Inter" font-size="9.5" fill="var(--ink-faint)">${label}</text>
+  </svg>`;
+}
+
+function sparkline(points, color){
+  const w=260,h=70, max=Math.max(...points), min=Math.min(...points);
+  const step = w/(points.length-1);
+  const pts = points.map((p,i)=> `${(i*step).toFixed(1)},${(h - ((p-min)/(max-min||1))*h*0.85 - 6).toFixed(1)}`).join(' ');
+  return `<svg viewBox="0 0 ${w} ${h}" width="100%" height="${h}" preserveAspectRatio="none">
+    <polyline points="${pts}" fill="none" stroke="${color||'var(--primary)'}" stroke-width="2.4"/>
+    ${points.map((p,i)=>{const x=i*step, y=h - ((p-min)/(max-min||1))*h*0.85 - 6; return `<circle cx="${x}" cy="${y}" r="2.6" fill="${color||'var(--primary)'}"/>`;}).join('')}
+  </svg>`;
+}
+
+function kanbanBoard(root, data, onMove){
+  const cols = Object.keys(data);
+  root.innerHTML = `<div class="kanban">${cols.map(col=>`
+    <div class="kcol">
+      <div class="kcol-head"><h4>${col}</h4><span class="kcol-count">${data[col].length}</span></div>
+      ${data[col].map(card=>`
+        <div class="kcard">
+          <div class="t">${card.t}</div>
+          <div class="m">${card.id} · ${card.m}</div>
+          <div class="kactions">
+            ${cols.filter(c=>c!==col).map(c=>`<button class="btn btn-ghost btn-sm" data-move="${card.id}" data-to="${c}" data-from="${col}">→ ${c}</button>`).join('')}
+          </div>
+        </div>`).join('') || '<div class="help-note">No items</div>'}
+    </div>`).join('')}</div>`;
+  root.querySelectorAll('[data-move]').forEach(b=>{
+    b.onclick = ()=>{
+      const {move,to,from} = b.dataset;
+      const idx = data[from].findIndex(c=>c.id===move);
+      const [card] = data[from].splice(idx,1);
+      data[to].push(card);
+      kanbanBoard(root, data, onMove);
+      toast(`${move} moved to ${to}`);
+    };
+  });
+}
+
+/* =========================================================
+   VIEW BUILDERS
+========================================================= */
+const content = document.getElementById('content');
+function view(id, html){
+  const d = document.createElement('div'); d.className='view'; d.id='view-'+id; d.innerHTML = html;
+  content.appendChild(d); return d;
+}
+
+/* ---- Overview ---- */
+view('overview', `
+  <div class="page-head">
+    <div><div class="page-eyebrow">Live Snapshot</div><h2 class="page-title">Institution Overview</h2>
+    <p class="page-desc">Consolidated position across deposits, financing, trade and risk — refreshed every business hour.</p></div>
+    <button class="btn btn-primary" onclick="goTo('analytics')">Open Analytics & Reporting →</button>
+  </div>
+  <div class="grid grid-4" style="margin-bottom:18px;">
+    <div class="card kpi"><div class="octa-sm">$</div><div class="val">$47.6M</div><div class="lbl">Total Deposits</div><div class="delta up">▲ 4.2% MoM</div></div>
+    <div class="card kpi"><div class="octa-sm">FN</div><div class="val">$36.3M</div><div class="lbl">Financing Portfolio</div><div class="delta up">▲ 2.8% MoM</div></div>
+    <div class="card kpi"><div class="octa-sm">CU</div><div class="val">18,204</div><div class="lbl">Active Customers</div><div class="delta up">▲ 1.1% MoM</div></div>
+    <div class="card kpi"><div class="octa-sm">NP</div><div class="val">1.9%</div><div class="lbl">Non-Performing Loans</div><div class="delta down">▼ 0.3pt</div></div>
+  </div>
+  <div class="two-col" style="margin-bottom:18px;">
+    <div class="card">
+      <div class="section-title">Deposits vs Financing — last 6 months</div>
+      <div class="section-sub">In USD millions</div>
+      ${barChart([
+        {label:'Mar',value:41.2},{label:'Apr',value:42.8},{label:'May',value:44.1},
+        {label:'Jun',value:45.0},{label:'Jul',value:46.3},{label:'Aug',value:47.6}
+      ])}
+    </div>
+    <div class="card">
+      <div class="section-title">Liquidity Coverage Ratio</div>
+      <div class="section-sub">Regulatory minimum: 100%</div>
+      <div style="display:flex; justify-content:center;">${gauge(148,200,'LCR · 148%')}</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="section-title">Recent activity</div>
+    <div class="section-sub">Across all modules</div>
+    <div id="ovActivity"></div>
+  </div>
+`);
+document.getElementById('ovActivity').innerHTML = DB.accessLogs.map(l=>`
+  <div class="checklist-item"><span class="status-strip" style="background:var(--primary)"></span>
+    <div class="txt"><strong>${l.user}</strong> — ${l.action}</div>
+    <div class="cell-mono">${l.time}</div>
+  </div>`).join('');
+
+/* ---- Customer Services ---- */
+const vCust = view('customers', `
+  <div class="page-head">
+    <div><div class="page-eyebrow">Customer & Products</div><h2 class="page-title">Customer Services</h2>
+    <p class="page-desc">Search, onboard and monitor KYC status across retail, SME and corporate relationships.</p></div>
+  </div>
+  <div class="grid grid-3" style="margin-bottom:18px;">
+    <div class="card kpi"><div class="octa-sm">CU</div><div class="val">${DB.customers.length.toLocaleString()}</div><div class="lbl">Customers on file</div></div>
+    <div class="card kpi"><div class="octa-sm">✓</div><div class="val">${DB.customers.filter(c=>c.kyc==='Verified').length}</div><div class="lbl">KYC Verified</div></div>
+    <div class="card kpi"><div class="octa-sm">!</div><div class="val">${DB.customers.filter(c=>c.kyc!=='Verified').length}</div><div class="lbl">Pending / Flagged review</div></div>
+  </div>
+  <div class="table-card"><div id="custTable"></div></div>
+`);
+function renderCustTable(){
+  DataTable(vCust.querySelector('#custTable'), {
+    columns:[
+      {key:'id',label:'ID',render:r=>`<span class="cell-mono">${r.id}</span>`},
+      {key:'name',label:'Name',render:r=>`<span class="cell-strong">${r.name}</span>`},
+      {key:'segment',label:'Segment'},
+      {key:'product',label:'Product'},
+      {key:'balance',label:'Balance',render:r=>fmt(r.balance)},
+      {key:'kyc',label:'KYC',render:r=>badge(r.kyc, statusKind(r.kyc))},
+    ],
+    rows:DB.customers,
+    addBtn:{ onClick:()=>openModal(`
+      <div class="modal-head"><h3>Onboard Customer</h3><button class="close-x" onclick="closeModal()">✕</button></div>
+      <div class="modal-body">
+        <div class="field"><label>Full name / Entity</label><input id="mCustName" placeholder="e.g. Omar Farooq"></div>
+        <div class="field-row">
+          <div class="field"><label>Segment</label><select id="mCustSeg"><option>Retail</option><option>SME</option><option>Corporate</option></select></div>
+          <div class="field"><label>Initial product</label><select id="mCustProd">${DB.products.map(p=>`<option>${p.name}</option>`).join('')}</select></div>
+        </div>
+        <div class="field"><label>Opening balance (USD)</label><input id="mCustBal" type="number" value="1000"></div>
+      </div>
+      <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitCustomer()">Create Customer</button></div>
+    `) }
+  });
+}
+renderCustTable();
+function submitCustomer(){
+  const name = document.getElementById('mCustName').value.trim();
+  if(!name){ toast('Enter a customer name first'); return; }
+  DB.customers.unshift({id:uid('CU-'), name, segment:document.getElementById('mCustSeg').value,
+    kyc:'Pending', product:document.getElementById('mCustProd').value,
+    balance:Number(document.getElementById('mCustBal').value||0), joined:new Date().toISOString().slice(0,10)});
+  closeModal(); renderCustTable(); toast(`${name} onboarded — KYC pending`);
+}
+
+/* ---- Financial Products ---- */
+view('products', `
+  <div class="page-head">
+    <div><div class="page-eyebrow">Customer & Products</div><h2 class="page-title">Financial Products</h2>
+    <p class="page-desc">Product catalog spanning lending, deposits, trade and investment instruments.</p></div>
+  </div>
+  <div class="grid grid-3">
+    ${DB.products.map(p=>`
+      <div class="pcard">
+        <span class="tag">${badge(p.status, statusKind(p.status))}</span>
+        <div class="section-sub" style="margin-bottom:2px;">${p.type}</div>
+        <h3>${p.name}</h3>
+        <div class="meta">
+          <div><div class="n">${p.rate}</div><div class="l">Rate</div></div>
+          <div><div class="n">${p.tenure}</div><div class="l">Tenure</div></div>
+        </div>
+      </div>`).join('')}
+  </div>
+`);
+
+/* ---- Financing Application (wizard) ---- */
+const vApp = view('applications', `
+  <div class="page-head">
+    <div><div class="page-eyebrow">Customer & Products</div><h2 class="page-title">Financing Application</h2>
+    <p class="page-desc">Guided intake for new financing requests, from applicant details to Product selection.</p></div>
+  </div>
+  <div class="card" style="margin-bottom:18px;">
+    <div class="stepper-head" id="stepHead"></div>
+    <div id="stepBody"></div>
+    <div style="display:flex; justify-content:space-between; margin-top:20px;">
+      <button class="btn btn-ghost" id="stepBack">← Back</button>
+      <button class="btn btn-primary" id="stepNext">Continue →</button>
+    </div>
+  </div>
+  <div class="table-card"><div class="table-toolbar"><div class="section-title" style="margin:0;">Submitted applications</div></div><div id="appTable"></div></div>
+`);
+const steps = ['Applicant','Financing Need','Product & Terms','Review & Submit'];
+let curStep = 0;
+const appDraft = {};
+function renderStepHead(){
+  vApp.querySelector('#stepHead').innerHTML = steps.map((s,i)=>`
+    <div class="step-node ${i<curStep?'done':i===curStep?'active':''}">
+      <div class="step-circle">${i<curStep?'✓':i+1}</div>${s}
+    </div>`).join('');
+}
+function renderStepBody(){
+  const body = vApp.querySelector('#stepBody');
+  if(curStep===0){
+    body.innerHTML = `
+      <div class="field-row">
+        <div class="field"><label>Applicant name</label><input id="afName" value="${appDraft.name||''}" placeholder="e.g. Zara Ahmed"></div>
+        <div class="field"><label>CNIC / Registration No.</label><input id="afCnic" value="${appDraft.cnic||''}" placeholder="42101-XXXXXXX-X"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Segment</label><select id="afSeg"><option ${appDraft.seg==='Retail'?'selected':''}>Retail</option><option ${appDraft.seg==='SME'?'selected':''}>SME</option><option ${appDraft.seg==='Corporate'?'selected':''}>Corporate</option></select></div>
+        <div class="field"><label>Monthly income (USD)</label><input id="afIncome" type="number" value="${appDraft.income||''}" placeholder="2500"></div>
+      </div>`;
+  } else if(curStep===1){
+    body.innerHTML = `
+      <div class="field"><label>Purpose of financing</label><input id="afPurpose" value="${appDraft.purpose||''}" placeholder="e.g. Home purchase, working capital, vehicle"></div>
+      <div class="field-row">
+        <div class="field"><label>Requested amount (USD)</label><input id="afAmount" type="number" value="${appDraft.amount||''}" placeholder="25000"></div>
+        <div class="field"><label>Preferred tenure (months)</label><input id="afTenure" type="number" value="${appDraft.tenure||''}" placeholder="60"></div>
+      </div>`;
+  } else if(curStep===2){
+    body.innerHTML = `
+      <div class="field"><label>Product</label><select id="afProduct">${DB.products.map(p=>`<option ${appDraft.product===p.name?'selected':''}>${p.name}</option>`).join('')}</select></div>
+      <div class="field"><label>Collateral / security offered</label><textarea id="afCollateral" rows="3" placeholder="Describe any asset offered as security">${appDraft.collateral||''}</textarea></div>`;
+  } else {
+    body.innerHTML = `
+      <div class="help-note">Review the details below, then submit for credit screening.</div>
+      <div style="margin-top:12px;">
+        ${['name','cnic','seg','income','purpose','amount','tenure','product','collateral'].map(k=>`
+          <div class="checklist-item"><div class="txt"><strong>${k}</strong>: ${appDraft[k]||'—'}</div></div>`).join('')}
+      </div>`;
+  }
+}
+function collectStep(){
+  if(curStep===0){ appDraft.name=vApp.querySelector('#afName').value; appDraft.cnic=vApp.querySelector('#afCnic').value; appDraft.seg=vApp.querySelector('#afSeg').value; appDraft.income=vApp.querySelector('#afIncome').value; }
+  if(curStep===1){ appDraft.purpose=vApp.querySelector('#afPurpose').value; appDraft.amount=vApp.querySelector('#afAmount').value; appDraft.tenure=vApp.querySelector('#afTenure').value; }
+  if(curStep===2){ appDraft.product=vApp.querySelector('#afProduct').value; appDraft.collateral=vApp.querySelector('#afCollateral').value; }
+}
+function renderAppTable(){
+  DataTable(vApp.querySelector('#appTable'), {
+    columns:[
+      {key:'id',label:'ID',render:r=>`<span class="cell-mono">${r.id}</span>`},
+      {key:'name',label:'Applicant'},
+      {key:'product',label:'Product'},
+      {key:'amount',label:'Amount',render:r=>fmt(r.amount||0)},
+      {key:'status',label:'Status',render:r=>badge(r.status,statusKind(r.status))},
+    ],
+    rows: DB.applications
+  });
+}
+vApp.querySelector('#stepNext').addEventListener('click', ()=>{
+  collectStep();
+  if(curStep < steps.length-1){ curStep++; renderStepHead(); renderStepBody(); vApp.querySelector('#stepNext').textContent='Continue →'; }
+  else {
+    if(!appDraft.name){ toast('Applicant name is required'); curStep=0; renderStepHead(); renderStepBody(); return; }
+    DB.applications.unshift({id:uid('FA-'), name:appDraft.name, product:appDraft.product, amount:Number(appDraft.amount||0), status:'Submitted'});
+    renderAppTable();
+    toast(`Application ${DB.applications[0].id} submitted for screening`);
+    curStep=0; for(const k in appDraft) delete appDraft[k]; renderStepHead(); renderStepBody();
+  }
+});
+vApp.querySelector('#stepBack').addEventListener('click', ()=>{ collectStep(); if(curStep>0){ curStep--; renderStepHead(); renderStepBody(); }});
+renderStepHead(); renderStepBody(); renderAppTable();
+
+/* ---- Contract Management ---- */
+const vCon = view('contracts', `
+  <div class="page-head"><div><div class="page-eyebrow">Customer & Products</div><h2 class="page-title">Contract Management</h2>
+  <p class="page-desc">Track financing and Digital contract lifecycles, from signature to renewal.</p></div></div>
+  <div class="table-card"><div id="conTable"></div></div>
+`);
+DataTable(vCon.querySelector('#conTable'), {
+  columns:[
+    {key:'id',label:'Contract',render:r=>`<span class="cell-mono">${r.id}</span>`},
+    {key:'customer',label:'Customer',render:r=>`<span class="cell-strong">${r.customer}</span>`},
+    {key:'product',label:'Product'},
+    {key:'signed',label:'Signed'},
+    {key:'expiry',label:'Expiry'},
+    {key:'status',label:'Status',render:r=>badge(r.status,statusKind(r.status))},
+  ], rows:DB.contracts
+});
+
+/* ---- Product Management ---- */
+view('productmgmt', `
+  <div class="page-head"><div><div class="page-eyebrow">Customer & Products</div><h2 class="page-title">Product Management</h2>
+  <p class="page-desc">Lifecycle stage and adoption tracking for the active product suite.</p></div></div>
+  <div class="card">
+    <div class="section-title">Adoption by product</div><div class="section-sub">Share of eligible customers using product</div>
+    ${barChart(DB.productLifecycle.map(p=>({label:p.name, value:p.adoption})))}
+  </div>
+  <div class="table-card" style="margin-top:18px;">
+    <table><thead><tr><th>Product</th><th>Lifecycle Stage</th><th>Adoption</th></tr></thead>
+    <tbody>${DB.productLifecycle.map(p=>`<tr><td class="cell-strong">${p.name}</td><td>${badge(p.stage, p.stage==='Mature'?'green':p.stage==='Pilot'?'grey':'gold')}</td><td>${p.adoption}%</td></tr>`).join('')}</tbody></table>
+  </div>
+`);
+
+/* ---- Investment & Profit Management ---- */
+view('investment', `
+  <div class="page-head"><div><div class="page-eyebrow">Money & Markets</div><h2 class="page-title">Investment & Profit Management</h2>
+  <p class="page-desc">Investment pool performance and distribution oversight.</p></div></div>
+  <div class="grid grid-3" style="margin-bottom:18px;">
+    ${DB.pools.map(p=>`<div class="card kpi"><div class="octa-sm">PL</div><div class="val">${fmt(p.size)}</div><div class="lbl">${p.name}</div>
+      <div style="margin-top:8px; font-size:11.5px; color:var(--ink-soft);">Ratio ${p.ratio} · Last return ${p.lastProfit}</div></div>`).join('')}
+  </div>
+  <div class="card">
+    <div class="section-title">Return distribution trend</div><div class="section-sub">Weighted average, last 8 periods</div>
+    ${sparkline([5.8,6.0,6.1,6.4,6.2,6.6,6.8,6.8])}
+  </div>
+`);
+
+/* ---- Trade & Business ---- */
+const vTrade = view('trade', `
+  <div class="page-head"><div><div class="page-eyebrow">Money & Markets</div><h2 class="page-title">Trade & Business</h2>
+  <p class="page-desc">Letters of credit, trade Asset Finance and shipping guarantees in progress.</p></div></div>
+  <div class="table-card"><div id="tradeTable"></div></div>
+`);
+DataTable(vTrade.querySelector('#tradeTable'), {
+  columns:[
+    {key:'id',label:'Ref',render:r=>`<span class="cell-mono">${r.id}</span>`},
+    {key:'client',label:'Client'},{key:'type',label:'Instrument'},
+    {key:'amount',label:'Amount',render:r=>fmt(r.amount)},
+    {key:'stage',label:'Stage',render:r=>badge(r.stage,statusKind(r.stage))},
+  ], rows:DB.trade
+});
+
+/* ---- Payment & Settlement ---- */
+const vPay = view('payments', `
+  <div class="page-head">
+    <div><div class="page-eyebrow">Money & Markets</div><h2 class="page-title">Payment & Settlement</h2>
+    <p class="page-desc">Move funds between accounts and monitor settlement status in real time.</p></div>
+  </div>
+  <div class="table-card"><div id="payTable"></div></div>
+`);
+function renderPayTable(){
+  DataTable(vPay.querySelector('#payTable'), {
+    columns:[
+      {key:'id',label:'Txn ID',render:r=>`<span class="cell-mono">${r.id}</span>`},
+      {key:'from',label:'From'},{key:'to',label:'To'},
+      {key:'amount',label:'Amount',render:r=>fmt(r.amount)},
+      {key:'type',label:'Type'},
+      {key:'status',label:'Status',render:r=>badge(r.status,statusKind(r.status))},
+    ], rows:DB.transactions,
+    addBtn:{onClick:()=>openModal(`
+      <div class="modal-head"><h3>New Transfer</h3><button class="close-x" onclick="closeModal()">✕</button></div>
+      <div class="modal-body">
+        <div class="field"><label>From account / customer ID</label><input id="pFrom" placeholder="CU-2202"></div>
+        <div class="field"><label>To account / beneficiary</label><input id="pTo" placeholder="CU-2204 or beneficiary name"></div>
+        <div class="field-row">
+          <div class="field"><label>Amount (USD)</label><input id="pAmt" type="number" placeholder="1500"></div>
+          <div class="field"><label>Type</label><select id="pType"><option>Transfer</option><option>Bill Payment</option><option>Trade Settlement</option></select></div>
+        </div>
+      </div>
+      <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="submitPayment()">Send</button></div>
+    `)}
+  });
+}
+renderPayTable();
+function submitPayment(){
+  const from = document.getElementById('pFrom').value.trim(), to = document.getElementById('pTo').value.trim();
+  const amt = Number(document.getElementById('pAmt').value||0);
+  if(!from || !to || !amt){ toast('Complete all fields to send a transfer'); return; }
+  DB.transactions.unshift({id:uid('TX-'), from, to, amount:amt, type:document.getElementById('pType').value, status:'Processing'});
+  closeModal(); renderPayTable(); toast(`Transfer of ${fmt(amt)} initiated`);
+}
+
+/* ---- Treasury ---- */
+view('treasury', `
+  <div class="page-head"><div><div class="page-eyebrow">Money & Markets</div><h2 class="page-title">Treasury</h2>
+  <p class="page-desc">Liquidity position, funding mix and FX rates for the trading desk.</p></div></div>
+  <div class="two-col" style="margin-bottom:18px;">
+    <div class="card">
+      <div class="section-title">FX Rates</div><div class="section-sub">Indicative, updated hourly</div>
+      <table><thead><tr><th>Pair</th><th>Rate</th><th>24h Change</th></tr></thead>
+      <tbody>${DB.fx.map(f=>`<tr><td class="cell-strong">${f.pair}</td><td class="cell-mono">${f.rate}</td>
+        <td>${badge((f.chg>=0?'▲ ':'▼ ')+Math.abs(f.chg)+'%', f.chg>=0?'green':'red')}</td></tr>`).join('')}</tbody></table>
+    </div>
+    <div class="card">
+      <div class="section-title">Liquidity Coverage</div>
+      <div style="display:flex; justify-content:center;">${gauge(148,200,'LCR')}</div>
+      <div class="legend"><div class="legend-item"><span class="legend-dot" style="background:var(--primary)"></span>Above 100% regulatory floor</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="section-title">Funding mix</div>
+    ${barChart([{label:'Customer Deposits',value:47.6},{label:'Interbank Placements',value:8.2},{label:'Bonds & Investments Issued',value:5.4},{label:'Equity',value:6.1}],{money:false})}
+  </div>
+`);
+
+/* ---- Collections & Recovery ---- */
+const vColl = view('collections', `
+  <div class="page-head"><div><div class="page-eyebrow">Money & Markets</div><h2 class="page-title">Collections & Recovery</h2>
+  <p class="page-desc">Overdue accounts moving through the recovery pipeline.</p></div></div>
+  <div id="collBoard"></div>
+`);
+kanbanBoard(vColl.querySelector('#collBoard'), DB.collections);
+
+/* ---- Accounting & Financial Management ---- */
+view('accounting', `
+  <div class="page-head"><div><div class="page-eyebrow">Finance & Risk</div><h2 class="page-title">Accounting & Financial Management</h2>
+  <p class="page-desc">General ledger summary and trial balance snapshot.</p></div></div>
+  <div class="card">
+    <div class="section-title">Trial balance — major heads</div><div class="section-sub">In USD, current period</div>
+    ${barChart([
+      {label:'Customer Deposits',value:47600000,color:'var(--info)'},
+      {label:'Financing Assets',value:36300000,color:'var(--primary)'},
+      {label:'Fixed Assets',value:2301000,color:'var(--accent)'},
+      {label:"Shareholders' Equity",value:6100000,color:'var(--success)'},
+    ],{money:true})}
+  </div>
+  <div class="table-card" style="margin-top:18px;">
+    <table><thead><tr><th>Account</th><th>Head</th><th>Debit</th><th>Credit</th></tr></thead>
+    <tbody>
+      <tr><td class="cell-mono">1000</td><td>Cash & Bank Balances</td><td class="cell-mono">$6,420,000</td><td>—</td></tr>
+      <tr><td class="cell-mono">1200</td><td>Financing Assets (net)</td><td class="cell-mono">$36,300,000</td><td>—</td></tr>
+      <tr><td class="cell-mono">2000</td><td>Customer Deposits</td><td>—</td><td class="cell-mono">$47,600,000</td></tr>
+      <tr><td class="cell-mono">3000</td><td>Shareholders' Equity</td><td>—</td><td class="cell-mono">$6,100,000</td></tr>
+    </tbody></table>
+  </div>
+`);
+
+/* ---- Asset Management ---- */
+const vAsset = view('assets', `
+  <div class="page-head"><div><div class="page-eyebrow">Finance & Risk</div><h2 class="page-title">Asset Management</h2>
+  <p class="page-desc">Fixed asset register with depreciation schedules.</p></div></div>
+  <div class="table-card"><div id="assetTable"></div></div>
+`);
+DataTable(vAsset.querySelector('#assetTable'), {
+  columns:[
+    {key:'id',label:'ID',render:r=>`<span class="cell-mono">${r.id}</span>`},
+    {key:'name',label:'Asset'},{key:'category',label:'Category'},
+    {key:'value',label:'Book Value',render:r=>fmt(r.value)},{key:'dep',label:'Depreciation'},
+  ], rows:DB.assets
+});
+
+/* ---- Risk Management ---- */
+view('risk', `
+  <div class="page-head"><div><div class="page-eyebrow">Finance & Risk</div><h2 class="page-title">Risk Management</h2>
+  <p class="page-desc">Enterprise risk register plotted by likelihood and impact.</p></div></div>
+  <div class="two-col">
+    <div class="card">
+      <div class="section-title">Risk heatmap</div><div class="section-sub">Likelihood (rows) × Impact (columns)</div>
+      <div id="heatmapBox"></div>
+    </div>
+    <div class="card">
+      <div class="section-title">Risk register</div>
+      <div id="riskList"></div>
+    </div>
+  </div>
+`);
+(function(){
+  const box = document.getElementById('heatmapBox');
+  let html = `<div class="heatmap"><div></div>`;
+  for(let i=1;i<=5;i++) html += `<div class="hm-axis">Impact ${i}</div>`;
+  for(let l=5; l>=1; l--){
+    html += `<div class="hm-axis">Likelihood ${l}</div>`;
+    for(let im=1; im<=5; im++){
+      const score = l*im;
+      const color = score>=16?'var(--danger)': score>=9?'var(--warning)': score>=4?'#7FA65C':'var(--success)';
+      const hits = DB.risks.filter(r=>r.likelihood===l && r.impact===im);
+      html += `<div class="hm-cell" style="background:${color}" title="${hits.map(h=>h.name).join(', ')}">${hits.length? hits.length : ''}</div>`;
+    }
+  }
+  html += `</div>
+  <div class="legend">
+    <div class="legend-item"><span class="legend-dot" style="background:var(--success)"></span>Low</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#7FA65C"></span>Moderate</div>
+    <div class="legend-item"><span class="legend-dot" style="background:var(--warning)"></span>High</div>
+    <div class="legend-item"><span class="legend-dot" style="background:var(--danger)"></span>Critical</div>
+  </div>`;
+  box.innerHTML = html;
+  document.getElementById('riskList').innerHTML = DB.risks.map(r=>{
+    const score = r.likelihood*r.impact;
+    const kind = score>=16?'red':score>=9?'gold':'green';
+    return `<div class="checklist-item"><div class="txt"><strong>${r.id}</strong> — ${r.name}<div class="cell-mono" style="margin-top:2px;">Owner: ${r.owner}</div></div>${badge('Score '+score, kind)}</div>`;
+  }).join('');
+})();
+
+/* ---- Compliance & Governance ---- */
+view('compliance', `
+  <div class="page-head"><div><div class="page-eyebrow">Finance & Risk</div><h2 class="page-title">Compliance & Governance</h2>
+  <p class="page-desc">Board resolutions and compliance checklist.</p></div></div>
+  <div class="two-col">
+    <div class="card">
+      <div class="section-title">Board resolutions</div>
+      <table><thead><tr><th>Ref</th><th>Topic</th><th>Date</th><th>Status</th></tr></thead>
+      <tbody>${DB.resolutions.map(r=>`<tr><td class="cell-mono">${r.id}</td><td>${r.topic}</td><td>${r.date}</td><td>${badge(r.status,statusKind(r.status))}</td></tr>`).join('')}</tbody></table>
+    </div>
+    <div class="card">
+      <div class="section-title">Compliance checklist</div>
+      <div class="section-sub">Quarter-end certification</div>
+      <div id="compList"></div>
+      <div class="progress-track" style="margin-top:14px;"><div class="progress-fill" id="compProgress"></div></div>
+      <div class="section-sub" id="compPct" style="margin-top:6px;"></div>
+    </div>
+  </div>
+`);
+function renderCompliance(){
+  const list = document.getElementById('compList');
+  list.innerHTML = DB.compliance.map((c,i)=>`
+    <div class="checklist-item"><input type="checkbox" data-i="${i}" ${c.done?'checked':''}><div class="txt">${c.t}</div></div>`).join('');
+  list.querySelectorAll('input').forEach(cb=> cb.onchange = ()=>{ DB.compliance[cb.dataset.i].done = cb.checked; renderCompliance(); });
+  const done = DB.compliance.filter(c=>c.done).length, tot = DB.compliance.length;
+  document.getElementById('compProgress').style.width = (done/tot*100)+'%';
+  document.getElementById('compPct').textContent = `${done} of ${tot} items certified (${Math.round(done/tot*100)}%)`;
+}
+renderCompliance();
+
+/* ---- Branch & Employee Management ---- */
+const vBr = view('branches', `
+  <div class="page-head"><div><div class="page-eyebrow">Operations</div><h2 class="page-title">Branch & Employee Management</h2>
+  <p class="page-desc">Branch network performance and staff directory.</p></div></div>
+  <div class="tabs">
+    <div class="tab active" data-tab="br">Branches</div>
+    <div class="tab" data-tab="em">Employees</div>
+  </div>
+  <div class="table-card"><div id="brTable"></div></div>
+  <div class="table-card" style="display:none; margin-top:0;" id="emWrap"><div id="emTable"></div></div>
+`);
+DataTable(vBr.querySelector('#brTable'), {
+  columns:[{key:'id',label:'ID',render:r=>`<span class="cell-mono">${r.id}</span>`},{key:'name',label:'Branch'},{key:'manager',label:'Manager'},{key:'staff',label:'Staff'},{key:'rating',label:'CSAT'}],
+  rows:DB.branches
+});
+DataTable(vBr.querySelector('#emTable'), {
+  columns:[{key:'id',label:'ID',render:r=>`<span class="cell-mono">${r.id}</span>`},{key:'name',label:'Name'},{key:'role',label:'Role'},{key:'branch',label:'Branch'},{key:'status',label:'Status',render:r=>badge(r.status,statusKind(r.status))}],
+  rows:DB.employees
+});
+vBr.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
+  vBr.querySelectorAll('.tab').forEach(x=>x.classList.remove('active')); t.classList.add('active');
+  vBr.querySelector('#brTable').closest('.table-card').style.display = t.dataset.tab==='br' ? 'block':'none';
+  vBr.querySelector('#emWrap').style.display = t.dataset.tab==='em' ? 'block':'none';
+});
+
+/* ---- Customer Support ---- */
+const vSup = view('support', `
+  <div class="page-head"><div><div class="page-eyebrow">Operations</div><h2 class="page-title">Customer Support</h2>
+  <p class="page-desc">Ticket queue across intake, triage and resolution.</p></div></div>
+  <div id="ticketBoard"></div>
+`);
+kanbanBoard(vSup.querySelector('#ticketBoard'), DB.tickets);
+
+/* ---- Security ---- */
+view('security', `
+  <div class="page-head"><div><div class="page-eyebrow">Operations</div><h2 class="page-title">Security</h2>
+  <p class="page-desc">Access logs and role-based permission matrix.</p></div></div>
+  <div class="two-col">
+    <div class="card">
+      <div class="section-title">Recent access log</div>
+      <div>${DB.accessLogs.map(l=>`<div class="checklist-item"><span class="status-strip" style="background:${l.action.includes('Failed')?'var(--danger)':'var(--success)'}"></span><div class="txt"><strong>${l.user}</strong> — ${l.action}</div><div class="cell-mono">${l.time}</div></div>`).join('')}</div>
+    </div>
+    <div class="card">
+      <div class="section-title">Role permissions</div>
+      <table><thead><tr><th>Role</th><th>Customers</th><th>Payments</th><th>Reports</th><th>Compliance</th></tr></thead>
+      <tbody>${DB.roles.map(r=>`<tr><td class="cell-strong">${r.role}</td><td>${r.customers}</td><td>${r.payments}</td><td>${r.reports}</td><td>${r.compliance}</td></tr>`).join('')}</tbody></table>
+    </div>
+  </div>
+`);
+
+/* ---- Data Management ---- */
+view('data', `
+  <div class="page-head"><div><div class="page-eyebrow">Operations</div><h2 class="page-title">Data Management</h2>
+  <p class="page-desc">Data quality and record volume across source systems.</p></div></div>
+  <div class="card">
+    <div class="section-title">Data quality score by source</div>
+    ${barChart(DB.dataSources.map(d=>({label:d.name, value:d.quality})))}
+  </div>
+  <div class="table-card" style="margin-top:18px;">
+    <table><thead><tr><th>Source system</th><th>Quality score</th><th>Records</th></tr></thead>
+    <tbody>${DB.dataSources.map(d=>`<tr><td class="cell-strong">${d.name}</td><td>${badge(d.quality+'%', d.quality>=95?'green':d.quality>=85?'gold':'red')}</td><td class="cell-mono">${d.records}</td></tr>`).join('')}</tbody></table>
+  </div>
+`);
+
+/* ---- Technology & Infrastructure ---- */
+view('infra', `
+  <div class="page-head"><div><div class="page-eyebrow">Operations</div><h2 class="page-title">Technology & Infrastructure</h2>
+  <p class="page-desc">System health and open incidents.</p></div></div>
+  <div class="grid grid-3" style="margin-bottom:18px;">
+    <div class="card kpi"><div class="octa-sm">UP</div><div class="val">99.97%</div><div class="lbl">30-day uptime</div></div>
+    <div class="card kpi"><div class="octa-sm">RT</div><div class="val">184ms</div><div class="lbl">Avg. API response</div></div>
+    <div class="card kpi"><div class="octa-sm">IN</div><div class="val">${DB.incidents.length}</div><div class="lbl">Open / recent incidents</div></div>
+  </div>
+  <div class="table-card">
+    <table><thead><tr><th>ID</th><th>System</th><th>Severity</th><th>Status</th><th>Reported</th></tr></thead>
+    <tbody>${DB.incidents.map(i=>`<tr><td class="cell-mono">${i.id}</td><td class="cell-strong">${i.system}</td><td>${badge(i.sev, i.sev==='Low'?'green':i.sev==='Medium'?'gold':'red')}</td><td>${badge(i.status,statusKind(i.status))}</td><td>${i.time}</td></tr>`).join('')}</tbody></table>
+  </div>
+`);
+
+/* ---- Integration ---- */
+const vInt = view('integration', `
+  <div class="page-head"><div><div class="page-eyebrow">Operations</div><h2 class="page-title">Integration</h2>
+  <p class="page-desc">Third-party and regulatory system connections.</p></div></div>
+  <div class="table-card"><div id="intTable"></div></div>
+`);
+function renderIntTable(){
+  DataTable(vInt.querySelector('#intTable'), {
+    columns:[
+      {key:'name',label:'Integration',render:r=>`<span class="cell-strong">${r.name}</span>`},
+      {key:'status',label:'Status',render:r=>badge(r.status,statusKind(r.status))},
+      {key:'lastSync',label:'Last Sync'},
+      {key:'action',label:'',render:r=>`<button class="btn btn-ghost btn-sm" onclick="testConn('${r.name}')">Test connection</button>`},
+    ], rows:DB.integrations
+  });
+}
+renderIntTable();
+function testConn(name){
+  const item = DB.integrations.find(i=>i.name===name);
+  item.status='Healthy'; item.lastSync='Just now'; renderIntTable();
+  toast(`${name} — connection verified`);
+}
+
+/* ---- Analytics & Reporting ---- */
+view('analytics', `
+  <div class="page-head"><div><div class="page-eyebrow">Insights</div><h2 class="page-title">Analytics & Reporting</h2>
+  <p class="page-desc">Build a quick chart from key portfolio metrics.</p></div></div>
+  <div class="card" style="margin-bottom:18px;">
+    <div class="field-row" style="align-items:flex-end;">
+      <div class="field"><label>Metric</label><select id="repMetric">
+        <option value="deposits">Deposits growth</option>
+        <option value="financing">Financing portfolio</option>
+        <option value="npf">Non-performing financing ratio</option>
+      </select></div>
+      <div class="field"><label>Period</label><select id="repPeriod"><option>Last 6 months</option><option>Last 12 months</option></select></div>
+      <button class="btn btn-primary" style="margin-bottom:14px;" onclick="buildReport()">Generate chart</button>
+    </div>
+    <div id="reportOut"></div>
+  </div>
+`);
+function buildReport(){
+  const metric = document.getElementById('repMetric').value;
+  const months12 = ['Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug'];
+  const months6 = months12.slice(-6);
+  const long = document.getElementById('repPeriod').value.includes('12');
+  const labels = long ? months12 : months6;
+  const series = {
+    deposits:[38.1,39.0,39.8,40.5,40.9,41.2,41.2,42.8,44.1,45.0,46.3,47.6],
+    financing:[29.4,30.1,31.0,31.8,32.5,33.2,33.9,34.5,35.0,35.6,36.0,36.3],
+    npf:[2.6,2.5,2.4,2.3,2.2,2.2,2.1,2.0,2.0,1.9,1.9,1.9],
+  }[metric].slice(long?0:-6);
+  const data = labels.map((l,i)=>({label:l, value:series[i]}));
+  document.getElementById('reportOut').innerHTML = `
+    <div class="section-title">${document.getElementById('repMetric').selectedOptions[0].text}</div>
+    <div class="section-sub">${document.getElementById('repPeriod').value}</div>
+    ${barChart(data)}`;
+  toast('Report generated');
+}
+buildReport();
+
+/* ---- Executive Management ---- */
+view('executive', `
+  <div class="page-head"><div><div class="page-eyebrow">Insights</div><h2 class="page-title">Executive Management</h2>
+  <p class="page-desc">Board-level summary of institutional performance and strategic initiatives.</p></div></div>
+  <div class="grid grid-4" style="margin-bottom:18px;">
+    <div class="card kpi"><div class="octa-sm">RO</div><div class="val">14.2%</div><div class="lbl">Return on Equity</div><div class="delta up">▲ 0.6pt</div></div>
+    <div class="card kpi"><div class="octa-sm">CA</div><div class="val">17.8%</div><div class="lbl">Capital Adequacy Ratio</div><div class="delta up">▲ 0.2pt</div></div>
+    <div class="card kpi"><div class="octa-sm">CI</div><div class="val">41.5%</div><div class="lbl">Cost-to-Income Ratio</div><div class="delta down">▼ 1.1pt</div></div>
+    <div class="card kpi"><div class="octa-sm">CS</div><div class="val">4.6 / 5</div><div class="lbl">Customer Satisfaction</div><div class="delta up">▲ 0.1</div></div>
+  </div>
+  <div class="card">
+    <div class="section-title">Strategic initiatives</div>
+    <table><thead><tr><th>Initiative</th><th>Owner</th><th>Progress</th><th>Target</th></tr></thead>
+    <tbody>${DB.initiatives.map(i=>`<tr><td class="cell-strong">${i.name}</td><td>${i.owner}</td>
+      <td style="min-width:160px;"><div class="progress-track"><div class="progress-fill" style="width:${i.progress}%"></div></div></td>
+      <td class="cell-mono">${i.due}</td></tr>`).join('')}</tbody></table>
+  </div>
+`);
+
+/* ---- global search: quick jump ---- */
+document.getElementById('globalSearch').addEventListener('keydown', e=>{
+  if(e.key==='Enter'){
+    const q = e.target.value.toLowerCase();
+    const hit = getAllowedModules().find(m=>m.label.toLowerCase().includes(q));
+    if(hit){ goTo(hit.id); e.target.value=''; }
+    else toast('No matching module in your current workspace');
+  }
+});
+
+
+/* =========================================================
+   AUTHENTICATION / ACCOUNT SWITCH / ACCOUNT SERVICES
+   Demo-only front-end authentication; connect to a real
+   identity provider before production use.
+   ========================================================= */
+/* currentWorkspace is declared early for access control */
+function toggleMenu(id){
+  const el = document.getElementById(id);
+  el.classList.toggle('open');
+}
+function closeMenus(except){
+  ['workspaceMenu','serviceMenu','profileMenu'].forEach(id=>{
+    if(id!==except) document.getElementById(id)?.classList.remove('open');
+  });
+}
+document.getElementById('workspaceTrigger').onclick = e=>{e.stopPropagation();closeMenus('workspaceMenu');toggleMenu('workspaceMenu');};
+document.getElementById('serviceTrigger').onclick = e=>{e.stopPropagation();closeMenus('serviceMenu');toggleMenu('serviceMenu');};
+document.getElementById('profileTrigger').onclick = e=>{e.stopPropagation();closeMenus('profileMenu');toggleMenu('profileMenu');};
+document.querySelectorAll('#workspaceMenu button').forEach(btn=>{
+  btn.onclick=()=>{
+    currentWorkspace=btn.dataset.workspace;
+    document.getElementById('workspaceName').textContent=currentWorkspace;
+    document.getElementById('workspaceMenu').classList.remove('open');
+    renderNav();
+    applyWorkspaceTheme();
+    goTo(getAllowedModules()[0]?.id || 'overview');
+    toast(`${currentWorkspace} workspace · features restricted to your role`);
+  };
+});
+document.addEventListener('click',()=>closeMenus());
+
+function openAccountService(title, desc){
+  closeMenus();
+  openModal(`
+    <div class="account-service-modal">
+      <div class="modal-head"><h3>${title}</h3><button class="close-x" onclick="closeModal()">✕</button></div>
+      <div class="modal-body">
+        <div class="service-hero"><span class="secure-badge" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.2);color:#fff">● Secure service</span>
+          <h3>${title}</h3><p>${desc}</p></div>
+        <div class="service-options">
+          <div class="service-option"><b>Account overview</b><span>Balances, available funds and account status</span></div>
+          <div class="service-option"><b>Recent activity</b><span>Review recent transactions and service requests</span></div>
+          <div class="service-option"><b>Security controls</b><span>MFA, limits and trusted device settings</span></div>
+          <div class="service-option"><b>Service request</b><span>Create a request with the banking operations team</span></div>
+        </div>
+        <div class="help-note">Product eligibility, pricing and financial controls follow the bank's approved governance framework.</div>
+      </div>
+      <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal()">Close</button><button class="btn btn-primary" onclick="toast('Service request started');closeModal()">Continue</button></div>
+    </div>
+  `);
+}
+
+function openWorkspaceChooser(){ document.getElementById('workspaceChooser').classList.add('open'); }
+function closeWorkspaceChooser(){ document.getElementById('workspaceChooser').classList.remove('open'); }
+function switchWorkspace(name, role){
+  currentWorkspace=name;
+  document.getElementById('workspaceName').textContent=name;
+  document.querySelectorAll('.account-switch-card').forEach(x=>x.classList.toggle('selected',x.dataset.ws===name));
+  closeWorkspaceChooser();
+  document.querySelector('.profile-name').textContent='Fatima Anwar';
+  document.querySelector('.profile-role').textContent=role || (WORKSPACE_META[name]?.role || 'User');
+  renderNav();
+  applyWorkspaceTheme();
+  goTo(getAllowedModules()[0]?.id || 'overview');
+  toast(`Switched to ${name} · modules restricted to your access`);
+}
+function togglePassword(){
+  const input=document.getElementById('loginPassword');
+  const btn=input.parentElement.querySelector('button');
+  input.type=input.type==='password'?'text':'password';
+  btn.textContent=input.type==='password'?'Show':'Hide';
+}
+function showLogin(message){
+  closeModal(); closeMenus();
+  document.getElementById('authScreen').classList.remove('hidden');
+  document.getElementById('app').classList.remove('ready');
+  document.body.style.overflow='hidden';
+  if(message) setTimeout(()=>toast(message),120);
+}
+document.getElementById('loginForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const user=document.getElementById('loginUser').value.trim();
+  const pass=document.getElementById('loginPassword').value;
+  if(!user || !pass){toast('Enter your user ID and password');return;}
+  const btn=e.currentTarget.querySelector('.auth-submit');
+  btn.disabled=true; btn.innerHTML='<span>Verifying secure session…</span><span>•••</span>';
+  setTimeout(()=>{
+    document.getElementById('authScreen').classList.add('hidden');
+    document.getElementById('app').classList.add('ready');
+    document.body.style.overflow='auto';
+    btn.disabled=false; btn.innerHTML='<span>Sign in securely</span><span>→</span>';
+    toast('Secure session established');
+  },650);
+});
+document.getElementById('workspaceChooser').addEventListener('click',e=>{
+  if(e.target.id==='workspaceChooser') closeWorkspaceChooser();
+});
+document.querySelectorAll('.account-switch-card').forEach(c=>{
+  c.addEventListener('click',()=>document.querySelectorAll('.account-switch-card').forEach(x=>x.classList.remove('selected')));
+});
+
+/* init */
+goTo('overview');
+setTimeout(function(){
+  document.getElementById('splash').classList.add('hide');
+  setTimeout(function(){
+    document.getElementById('authScreen').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }, 220);
+}, 2200);
+</script>
+</body>
+</html>
